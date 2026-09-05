@@ -113,15 +113,39 @@ header {
 .home-hero h1 { font-size: 3.2rem; margin-bottom: 1.2rem; }
 .home-hero h1 span { color: var(--primary-color); }
 .home-hero p { color: var(--text-muted); font-size: 1.15rem; line-height: 1.6; max-width: 620px; margin: 0 auto 2.5rem auto; }
+
+/* 6 BENEFITS & FEATURES GRID */
 .how-it-works-container { margin-top: 3rem; text-align: center; }
 .how-it-works-container h2 { font-size: 2rem; margin-bottom: 2rem; }
-.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; text-align: left; }
-.feature-card { background: var(--container-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); }
-.feature-icon { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; }
-.feature-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
-.feature-card p { color: var(--text-muted); line-height: 1.5; font-size: 0.92rem; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; text-align: left; }
+.feature-card { 
+    background: var(--container-bg); 
+    padding: 2.2rem; 
+    border-radius: 12px; 
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.feature-icon-wrapper {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: rgba(255, 102, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+}
+.feature-svg {
+    width: 26px;
+    height: 26px;
+    color: var(--primary-color);
+}
+.feature-card h3 { font-size: 1.2rem; margin-bottom: 0.6rem; color: var(--text-color); }
+.feature-card p { color: var(--text-muted); line-height: 1.55; font-size: 0.92rem; }
 
-/* Tool Grid Layout */
+/* Desktop Tool Split Grid Layout */
 .tool-container { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 1.5rem; height: calc(100vh - 100px); }
 .preview-side, .form-side { background-color: var(--container-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; overflow: hidden; }
 .form-side { padding: 1.8rem; overflow-y: auto; }
@@ -134,7 +158,7 @@ header {
 .btn-utility { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.5rem 0.9rem; border-radius: 7px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
 .btn-utility:hover { border-color: var(--primary-color); }
 
-/* Breadcrumbs (Numbers Fully Visible) */
+/* Breadcrumbs */
 .breadcrumb-container { width: 100%; padding: 0.8rem 0; margin-bottom: 0.5rem; overflow: visible; }
 .breadcrumb-nav { display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; }
 .step-dot { 
@@ -244,24 +268,19 @@ input:focus, textarea:focus, .custom-select:focus {
 .resume-sidebar-col { display: none; }
 .resume-main-col { width: 100%; }
 
-/* ========================================================
-   TEMPLATES GALLERY (6 STYLES)
-======================================================== */
-
-/* 1. TECH SPLIT (2-COLUMN SIDEBAR) */
+/* TEMPLATES GALLERY */
 .template-tech-split { font-family: 'Segoe UI', system-ui, sans-serif; }
 .template-tech-split .resume-header { border-bottom: 2px solid var(--accent-color); margin-bottom: 1.2rem; }
 .template-tech-split .resume-header-left h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
 .template-tech-split .resume-header-left p.role { font-size: 0.95rem; font-weight: 600; color: var(--accent-color); margin-top: 2px; }
-.template-tech-split .resume-contacts { display: none !important; } 
-.template-tech-split #sec-skills { display: none !important; } 
+.template-tech-split .resume-contacts { display: none !important; }
+.template-tech-split #sec-skills { display: none !important; }
 .template-tech-split .resume-split-body { display: grid; grid-template-columns: 32% 68%; gap: 1.4rem; }
 .template-tech-split .resume-sidebar-col { display: flex; flex-direction: column; gap: 1.2rem; border-right: 1px solid #e2e8f0; padding-right: 1rem; }
 .template-tech-split .sidebar-contacts-list { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.78rem; color: #475569; word-break: break-all; }
 .template-tech-split .sidebar-skills-content { font-size: 0.8rem; line-height: 1.5; color: #334155; white-space: pre-line; }
 .template-tech-split .resume-section-title { font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--accent-color); padding-bottom: 0.2rem; margin-bottom: 0.6rem; }
 
-/* 2. HARVARD CLASSIC */
 .template-harvard { font-family: 'Times New Roman', Times, serif; }
 .template-harvard .resume-header { flex-direction: column; text-align: center; border-bottom: 1px solid #111; margin-bottom: 1rem; }
 .template-harvard .resume-header-left { width: 100%; text-align: center; }
@@ -270,7 +289,6 @@ input:focus, textarea:focus, .custom-select:focus {
 .template-harvard .resume-section-title { font-size: 0.95rem; font-weight: bold; text-transform: uppercase; border-bottom: 1.5px solid #111; margin-top: 1rem; margin-bottom: 0.4rem; }
 .template-harvard .resume-avatar { display: none !important; }
 
-/* 3. SILICON VALLEY COMPACT GRID */
 .template-compact-grid { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.35; padding: 6%; }
 .template-compact-grid .resume-header { border-bottom: none; margin-bottom: 0.4rem; padding-bottom: 0; }
 .template-compact-grid .resume-header-left h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -1px; }
@@ -280,7 +298,6 @@ input:focus, textarea:focus, .custom-select:focus {
 .template-compact-grid .resume-text { font-size: 0.79rem; }
 .template-compact-grid .resume-item-header { font-size: 0.82rem; }
 
-/* 4. IVY LEAGUE EXECUTIVE */
 .template-ivy-league { font-family: 'Georgia', serif; }
 .template-ivy-league .resume-header { flex-direction: column; text-align: center; border-bottom: 3px double var(--accent-color); padding-bottom: 1rem; margin-bottom: 1rem; }
 .template-ivy-league .resume-header-left h1 { font-size: 2rem; font-weight: normal; letter-spacing: 2px; text-transform: uppercase; }
@@ -289,12 +306,10 @@ input:focus, textarea:focus, .custom-select:focus {
 .template-ivy-league .resume-section-title { font-size: 0.9rem; text-align: center; letter-spacing: 1.5px; text-transform: uppercase; border-bottom: 1px solid #333; margin-top: 1.2rem; margin-bottom: 0.6rem; padding-bottom: 0.2rem; }
 .template-ivy-league .resume-avatar { display: none !important; }
 
-/* 5. MODERN MINIMAL */
 .template-modern { font-family: 'Segoe UI', Tahoma, sans-serif; }
 .template-modern .resume-header-left h1 { font-size: 1.6rem; font-weight: 800; text-transform: uppercase; }
 .template-modern .resume-section-title { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--accent-color); margin-top: 1rem; margin-bottom: 0.4rem; }
 
-/* 6. EXECUTIVE CLEAN */
 .template-minimal { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .template-minimal .resume-header { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 .template-minimal .resume-header-left h1 { font-size: 2rem; font-weight: 300; letter-spacing: -1px; }
@@ -355,44 +370,123 @@ input:focus, textarea:focus, .custom-select:focus {
 .center { margin-left: auto; margin-right: auto; }
 .btn-primary-small { background: var(--primary-color); color: #fff; border: none; border-radius: 6px; padding: 0.55rem 1.2rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; }
 
-/* Mobile Preview Modal & FAB */
-.mobile-fab { 
-    display: none; 
-    position: fixed; 
-    bottom: 20px; right: 20px; 
-    background: var(--primary-color); 
-    color: white; border: none; 
-    border-radius: 30px; 
-    padding: 0.9rem 1.4rem; 
-    font-weight: bold; font-size: 0.95rem; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-    z-index: 99; cursor: pointer; 
+/* --- REVOLUTIONIZED MOBILE BOTTOM APP BAR --- */
+.mobile-bottom-bar {
+    display: none;
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 420px;
+    background: rgba(20, 22, 27, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    border-radius: 35px;
+    padding: 6px 8px;
+    z-index: 1100;
+    align-items: center;
+    justify-content: space-between;
 }
-.close-modal-btn { display: none; position: absolute; top: 15px; right: 15px; background: #ff4d4d; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; font-weight: bold; z-index: 1001; cursor: pointer; }
+.mobile-segmented-control {
+    display: flex;
+    background: var(--bg-color);
+    border-radius: 25px;
+    padding: 3px;
+    flex: 1;
+    margin-right: 8px;
+}
+.segment-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: 0.25s;
+}
+.segment-btn.active {
+    background: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(255, 102, 0, 0.4);
+}
+.mobile-quick-download {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    cursor: pointer;
+}
 
+/* RESPONSIVE LAYOUT ENGINE */
 @media (max-width: 960px) {
-    .tool-container { grid-template-columns: 1fr; height: auto; }
-    .preview-side { display: none; }
-    .mobile-fab { display: flex; }
-    .preview-side.modal-active { 
-        display: flex; position: fixed; 
-        top: 0; left: 0; 
-        width: 100vw; height: 100vh; 
-        z-index: 1000; border-radius: 0; 
-        background: rgba(0, 0, 0, 0.92); 
-        padding: 4rem 1rem 1.5rem 1rem; 
-        overflow-y: auto; 
+    /* Enable bottom control bar on builder pages */
+    body.is-builder-active .mobile-bottom-bar {
+        display: flex;
     }
-    .preview-side.modal-active .close-modal-btn { display: block; }
-    .preview-side.modal-active .preview-wrapper { width: 100%; overflow-x: auto; display: block; padding: 0.5rem; }
-    .preview-side.modal-active .resume-print-target { width: 100%; min-width: 320px; min-height: auto; padding: 1.2rem; }
+    
+    .tool-container {
+        display: block;
+        height: auto;
+        padding-bottom: 80px; /* Space for the bottom bar */
+    }
+
+    /* In Edit Mode: Show Form, Hide Preview */
+    body.mobile-mode-edit .preview-side {
+        display: none !important;
+    }
+    body.mobile-mode-edit .form-side {
+        display: block !important;
+        width: 100%;
+        overflow-y: visible;
+    }
+
+    /* In Preview Mode: Show Preview, Hide Form */
+    body.mobile-mode-preview .form-side {
+        display: none !important;
+    }
+    body.mobile-mode-preview .preview-side {
+        display: block !important;
+        width: 100%;
+        min-height: calc(100vh - 160px);
+        overflow-y: auto;
+    }
+    body.mobile-mode-preview .preview-wrapper {
+        padding: 0.5rem;
+        display: block;
+        overflow-x: auto;
+    }
+    body.mobile-mode-preview .resume-print-target {
+        width: 100%;
+        min-width: 320px;
+        min-height: auto;
+        padding: 1.2rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
 }
 
 @media (max-width: 768px) {
     header { padding: 0.8rem 1.2rem; }
     .home-hero h1 { font-size: 2.2rem; }
     .home-hero { padding: 3rem 1rem 2rem 1rem; }
-    .features-grid { grid-template-columns: 1fr; gap: 1.2rem; }
     .step-dot { width: 32px; height: 32px; font-size: 0.85rem; }
     .form-side { padding: 1.2rem 1rem; }
     .question-card { padding: 1.5rem 1.2rem; }
