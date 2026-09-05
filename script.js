@@ -1,5 +1,6 @@
 let currentStep = 1;
 let currentQuestionIndex = 1;
+let activeToolSection = 'home';
 const totalStep1Questions = 8;
 const totalSteps = 6;
 const stepNames = ["Profile Info", "Work Experience", "Education History", "Core Skills", "Additional Info", "Design & Export"];
@@ -23,12 +24,21 @@ menuBtn.addEventListener('click', () => {
 });
 
 function navigateToSection(targetId) {
+    activeToolSection = targetId;
     document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
     navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('data-target') === targetId));
     document.getElementById(targetId).classList.add('active');
     navDrawer.classList.remove('active');
     menuBtn.classList.remove('active');
     window.scrollTo(0, 0);
+
+    // Sync Bottom App Bar visibility on mobile
+    if (targetId === 'product' || targetId === 'cover-letter') {
+        document.body.classList.add('is-builder-active');
+        setMobileViewMode('edit');
+    } else {
+        document.body.classList.remove('is-builder-active');
+    }
 }
 navLinks.forEach(l => l.addEventListener('click', (e) => { 
     e.preventDefault(); 
@@ -45,6 +55,33 @@ function showToast(message) {
         toast.style.opacity = '0'; 
         setTimeout(() => toast.remove(), 300); 
     }, 4000);
+}
+
+// Mobile View Mode Switcher (Form Edit vs. Live Preview)
+function setMobileViewMode(mode) {
+    const editBtn = document.getElementById('btn-mode-edit');
+    const prevBtn = document.getElementById('btn-mode-preview');
+
+    if (mode === 'preview') {
+        document.body.classList.remove('mobile-mode-edit');
+        document.body.classList.add('mobile-mode-preview');
+        prevBtn.classList.add('active');
+        editBtn.classList.remove('active');
+    } else {
+        document.body.classList.remove('mobile-mode-preview');
+        document.body.classList.add('mobile-mode-edit');
+        editBtn.classList.add('active');
+        prevBtn.classList.remove('active');
+    }
+}
+
+// Trigger Download for the Active Section (Resume vs Cover Letter)
+function triggerActiveDownload() {
+    if (activeToolSection === 'cover-letter') {
+        downloadCLPDF();
+    } else {
+        downloadPDF();
+    }
 }
 
 // Template Selection Engine (6 Templates)
@@ -179,7 +216,7 @@ document.getElementById('resume-form').addEventListener('keydown', (e) => {
     }
 });
 
-// Real-Time Preview Sync (Coordinates Header & 2-Col Sidebar)
+// Real-Time Preview Sync
 function syncText(inputId, previewId, fallbackText) {
     document.getElementById(inputId)?.addEventListener('input', (e) => {
         document.getElementById(previewId).textContent = e.target.value.trim() || fallbackText;
@@ -208,7 +245,6 @@ function syncContactsAndSidebar() {
     linkEl.textContent = `🔗 ${link}`; linkEl.style.display = link ? 'inline' : 'none';
     gitEl.textContent = `🐙 ${git}`; gitEl.style.display = git ? 'inline' : 'none';
 
-    // Populate Sidebar for Split Templates
     const sidebarContacts = document.getElementById('sidebar-contacts-list');
     if (sidebarContacts) {
         sidebarContacts.innerHTML = `
@@ -381,14 +417,6 @@ function downloadPDF() {
         element.style.width = originalWidth;
     });
 }
-
-// Mobile Live Preview Modal Handlers
-document.getElementById('mobile-fab-btn').addEventListener('click', () => {
-    document.getElementById('mobile-preview-modal').classList.add('modal-active');
-});
-document.getElementById('close-modal-btn').addEventListener('click', () => {
-    document.getElementById('mobile-preview-modal').classList.remove('modal-active');
-});
 
 // Sample Data
 function loadSampleData() {
