@@ -1,484 +1,536 @@
-:root {
-    --bg-color: #0c0d10; 
-    --container-bg: #14161b; 
-    --card-bg: #1c1f26;
-    --text-color: #f4f4f5; 
-    --text-muted: #9ba1ad;
-    --primary-color: #ff6600; 
-    --primary-hover: #e65c00; 
-    --border-color: #272b35; 
-    --preview-bg: #181a20; 
+let currentStep = 1;
+let currentQuestionIndex = 1;
+const totalStep1Questions = 8;
+const totalSteps = 6;
+const stepNames = ["Profile Info", "Work Experience", "Education History", "Core Skills", "Additional Info", "Design & Export"];
+
+// Theme Control
+const themeBtn = document.getElementById('theme-btn');
+themeBtn.addEventListener('click', () => {
+    const targetTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', targetTheme);
+    themeBtn.textContent = targetTheme === 'dark' ? '🌙' : '☀️';
+});
+
+// Navigation Drawer
+const menuBtn = document.getElementById('menu-btn');
+const navDrawer = document.getElementById('nav-drawer');
+const navLinks = document.querySelectorAll('.nav-link');
+
+menuBtn.addEventListener('click', () => {
+    navDrawer.classList.toggle('active');
+    menuBtn.classList.toggle('active');
+});
+
+function navigateToSection(targetId) {
+    document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+    navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('data-target') === targetId));
+    document.getElementById(targetId).classList.add('active');
+    navDrawer.classList.remove('active');
+    menuBtn.classList.remove('active');
+    window.scrollTo(0, 0);
+}
+navLinks.forEach(l => l.addEventListener('click', (e) => { 
+    e.preventDefault(); 
+    navigateToSection(l.getAttribute('data-target')); 
+}));
+
+function showToast(message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `⚠️ <span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => { 
+        toast.style.opacity = '0'; 
+        setTimeout(() => toast.remove(), 300); 
+    }, 4000);
 }
 
-[data-theme="light"] {
-    --bg-color: #f5f6f9; 
-    --container-bg: #ffffff; 
-    --card-bg: #f8fafc;
-    --text-color: #111827; 
-    --text-muted: #64748b;
-    --primary-color: #ff6600; 
-    --primary-hover: #e65c00; 
-    --border-color: #e2e8f0; 
-    --preview-bg: #eaecf1;
+// Template Selection Engine (6 Templates)
+const allTemplateClasses = [
+    'template-tech-split', 
+    'template-harvard', 
+    'template-compact-grid', 
+    'template-ivy-league', 
+    'template-modern', 
+    'template-minimal'
+];
+
+function openTemplatePicker() {
+    document.getElementById('template-modal').classList.remove('hidden');
 }
 
-* { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
-    transition: background-color 0.2s, border-color 0.2s; 
+function selectInitialTemplate(templateClass, defaultColor) {
+    const target = document.querySelector('.resume-print-target');
+    allTemplateClasses.forEach(cls => target.classList.remove(cls));
+    target.classList.add(templateClass);
+    
+    const selector = document.getElementById('template-selector');
+    if (selector) selector.value = templateClass;
+    if (defaultColor) setAccentColor(defaultColor);
+    
+    document.getElementById('template-modal').classList.add('hidden');
+    navigateToSection('product');
+    saveToLocalStorage();
 }
 
-body { 
-    background-color: var(--bg-color); 
-    color: var(--text-color); 
-    overflow-x: hidden; 
-}
+// Step & Question Navigation
+function updateProgressVisuals() {
+    document.querySelectorAll('.step-dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index + 1 === currentStep);
+    });
 
-/* Header */
-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 0.9rem 2rem; 
-    background-color: var(--container-bg); 
-    border-bottom: 1px solid var(--border-color); 
-    position: sticky; 
-    top: 0; 
-    z-index: 100; 
-}
-.logo { font-size: 1.5rem; font-weight: 800; }
-.logo span { color: var(--primary-color); }
-.nav-actions { display: flex; align-items: center; gap: 1rem; }
-.theme-toggle { background: none; border: none; font-size: 1.25rem; cursor: pointer; }
-.hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; z-index: 101; }
-.hamburger span { display: block; width: 24px; height: 2.5px; background-color: var(--text-color); transition: 0.3s; }
-.hamburger.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
-.hamburger.active span:nth-child(2) { opacity: 0; }
-.hamburger.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
-
-.nav-menu { 
-    position: fixed; 
-    top: 0; right: 0; 
-    width: 250px; height: 100vh; 
-    background-color: var(--container-bg); 
-    border-left: 1px solid var(--border-color); 
-    display: flex; flex-direction: column; 
-    padding: 6rem 2rem 2rem 2rem; 
-    gap: 1.4rem; 
-    transform: translateX(100%); 
-    transition: transform 0.3s ease; 
-    z-index: 100; 
-}
-.nav-menu.active { transform: translateX(0); }
-.nav-menu a { color: var(--text-color); text-decoration: none; font-size: 1.05rem; font-weight: 500; }
-.nav-menu a:hover, .nav-menu a.active { color: var(--primary-color); }
-
-/* Global Section Framework */
-.page-section { display: none; padding: 1.5rem; max-width: 1400px; margin: 0 auto; min-height: calc(100vh - 65px); }
-.page-section.active { display: block; }
-
-/* Buttons */
-.btn-primary { 
-    background-color: var(--primary-color); 
-    color: white; 
-    border: none; 
-    padding: 0.8rem 1.6rem; 
-    font-size: 0.95rem; 
-    font-weight: 600; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-.btn-primary:hover { background-color: var(--primary-hover); }
-
-.btn-secondary { 
-    background: none; 
-    border: 1px solid var(--border-color); 
-    color: var(--text-color); 
-    padding: 0.8rem 1.4rem; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-size: 0.95rem; 
-    font-weight: 600; 
-}
-.btn-secondary:hover { border-color: var(--primary-color); color: var(--primary-color); }
-
-/* Hero */
-.home-hero { text-align: center; padding: 5rem 1rem 3rem 1rem; }
-.home-hero h1 { font-size: 3.2rem; margin-bottom: 1.2rem; }
-.home-hero h1 span { color: var(--primary-color); }
-.home-hero p { color: var(--text-muted); font-size: 1.15rem; line-height: 1.6; max-width: 620px; margin: 0 auto 2.5rem auto; }
-.how-it-works-container { margin-top: 3rem; text-align: center; }
-.how-it-works-container h2 { font-size: 2rem; margin-bottom: 2rem; }
-.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; text-align: left; }
-.feature-card { background: var(--container-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); }
-.feature-icon { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; }
-.feature-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
-.feature-card p { color: var(--text-muted); line-height: 1.5; font-size: 0.92rem; }
-
-/* Tool Grid Layout */
-.tool-container { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 1.5rem; height: calc(100vh - 100px); }
-.preview-side, .form-side { background-color: var(--container-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; overflow: hidden; }
-.form-side { padding: 1.8rem; overflow-y: auto; }
-.preview-wrapper { flex: 1; background-color: var(--preview-bg); border-radius: 8px; padding: 1.5rem; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start; }
-.form-side::-webkit-scrollbar, .preview-wrapper::-webkit-scrollbar { width: 6px; }
-.form-side::-webkit-scrollbar-thumb, .preview-wrapper::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-
-/* Form Toolbar */
-.form-actions-top { display: flex; gap: 10px; margin-bottom: 1.2rem; justify-content: flex-end; }
-.btn-utility { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.5rem 0.9rem; border-radius: 7px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-.btn-utility:hover { border-color: var(--primary-color); }
-
-/* Breadcrumbs (Numbers Fully Visible) */
-.breadcrumb-container { width: 100%; padding: 0.8rem 0; margin-bottom: 0.5rem; overflow: visible; }
-.breadcrumb-nav { display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; }
-.step-dot { 
-    width: 38px; height: 38px; 
-    border-radius: 50%; 
-    background-color: var(--card-bg); 
-    border: 2px solid var(--border-color); 
-    display: flex; align-items: center; justify-content: center; 
-    font-size: 0.95rem; font-weight: 700; 
-    cursor: pointer; color: var(--text-muted); 
-    position: relative; z-index: 2; flex-shrink: 0;
-}
-.step-dot.active { 
-    background-color: var(--primary-color); 
-    border-color: var(--primary-color); 
-    color: white; 
-    box-shadow: 0 0 12px rgba(255, 102, 0, 0.4);
-}
-.step-line { flex: 1; height: 3px; background: var(--border-color); z-index: 1; }
-
-/* Micro Progress Bar */
-.question-progress-bar-wrap { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden; }
-.question-progress-bar { width: 12%; height: 100%; background: var(--primary-color); transition: width 0.3s ease; }
-
-/* Question Cards */
-.form-step { display: none; }
-.form-step.active { display: block; }
-.question-card {
-    display: none;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 2rem 1.8rem;
-    animation: slideUpFade 0.25s ease forwards;
-}
-.question-card.active { display: block; }
-
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.q-badge {
-    display: inline-block;
-    background: rgba(255, 102, 0, 0.12);
-    color: var(--primary-color);
-    font-size: 0.78rem; font-weight: 700;
-    padding: 0.3rem 0.7rem; border-radius: 20px;
-    margin-bottom: 0.8rem; text-transform: uppercase;
-}
-.question-card h3 { font-size: 1.35rem; margin-bottom: 0.4rem; color: var(--text-color); }
-.q-hint { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.4; }
-
-/* Form Inputs */
-.large-input { width: 100%; padding: 1rem 1.1rem !important; font-size: 1.05rem !important; }
-.form-group { margin-bottom: 1.2rem; }
-.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; }
-input[type="text"], input[type="email"], input[type="tel"], textarea, .custom-select {
-    width: 100%; padding: 0.8rem 1rem;
-    background-color: var(--bg-color);
-    border: 1.5px solid var(--border-color);
-    color: var(--text-color);
-    border-radius: 8px; outline: none; font-size: 0.95rem;
-}
-input:focus, textarea:focus, .custom-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
-}
-
-.dynamic-wrapper { border: 1px solid var(--border-color); padding: 1.2rem; border-radius: 8px; margin-bottom: 1rem; background-color: rgba(255, 255, 255, 0.02); position: relative; }
-.btn-delete { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
-.form-navigation { display: flex; justify-content: space-between; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
-
-/* Color Swatches */
-.color-swatches { display: flex; gap: 10px; align-items: center; }
-.swatch { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); }
-.swatch:hover { transform: scale(1.1); }
-.custom-color-picker { height: 35px; width: 35px; cursor: pointer; border: none; padding: 0; background: transparent; }
-
-/* Resume Render Target */
-.resume-print-target {
-    --accent-color: #0f172a;
-    background-color: #ffffff; 
-    color: #333; 
-    width: 100%; 
-    max-width: 680px; 
-    min-height: 960px;
-    padding: 7%; 
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); 
-    box-sizing: border-box; 
-    position: relative;
-}
-@media print { .resume-print-target { box-shadow: none; width: 100%; } }
-
-.resume-item, .resume-section-title { page-break-inside: avoid; break-inside: avoid; }
-.resume-print-target h1, .resume-print-target .resume-section-title { color: var(--accent-color) !important; }
-.resume-print-target .resume-section-title { border-bottom-color: var(--accent-color) !important; }
-.resume-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-color); padding-bottom: 0.8rem; margin-bottom: 0.8rem; }
-.resume-avatar { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; display: none; }
-.resume-contacts { font-size: 0.78rem; margin-bottom: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.6rem; color: #444; }
-.resume-text { font-size: 0.82rem; line-height: 1.45; color: #333; white-space: pre-line; }
-.resume-item { margin-bottom: 0.6rem; }
-.resume-item-header { display: flex; justify-content: space-between; font-weight: 700; font-size: 0.85rem; color: #222; }
-.resume-item-sub { display: flex; justify-content: space-between; font-style: italic; font-size: 0.78rem; color: #666; margin-bottom: 0.2rem; }
-
-/* Structural Split System */
-.resume-sidebar-col { display: none; }
-.resume-main-col { width: 100%; }
-
-/* ========================================================
-   TEMPLATES GALLERY (6 STYLES)
-======================================================== */
-
-/* 1. TECH SPLIT (2-COLUMN SIDEBAR) */
-.template-tech-split { font-family: 'Segoe UI', system-ui, sans-serif; }
-.template-tech-split .resume-header { border-bottom: 2px solid var(--accent-color); margin-bottom: 1.2rem; }
-.template-tech-split .resume-header-left h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
-.template-tech-split .resume-header-left p.role { font-size: 0.95rem; font-weight: 600; color: var(--accent-color); margin-top: 2px; }
-.template-tech-split .resume-contacts { display: none !important; } 
-.template-tech-split #sec-skills { display: none !important; } 
-.template-tech-split .resume-split-body { display: grid; grid-template-columns: 32% 68%; gap: 1.4rem; }
-.template-tech-split .resume-sidebar-col { display: flex; flex-direction: column; gap: 1.2rem; border-right: 1px solid #e2e8f0; padding-right: 1rem; }
-.template-tech-split .sidebar-contacts-list { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.78rem; color: #475569; word-break: break-all; }
-.template-tech-split .sidebar-skills-content { font-size: 0.8rem; line-height: 1.5; color: #334155; white-space: pre-line; }
-.template-tech-split .resume-section-title { font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--accent-color); padding-bottom: 0.2rem; margin-bottom: 0.6rem; }
-
-/* 2. HARVARD CLASSIC */
-.template-harvard { font-family: 'Times New Roman', Times, serif; }
-.template-harvard .resume-header { flex-direction: column; text-align: center; border-bottom: 1px solid #111; margin-bottom: 1rem; }
-.template-harvard .resume-header-left { width: 100%; text-align: center; }
-.template-harvard .resume-header-left h1 { font-size: 1.8rem; font-weight: normal; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.2rem; }
-.template-harvard .resume-contacts { justify-content: center; }
-.template-harvard .resume-section-title { font-size: 0.95rem; font-weight: bold; text-transform: uppercase; border-bottom: 1.5px solid #111; margin-top: 1rem; margin-bottom: 0.4rem; }
-.template-harvard .resume-avatar { display: none !important; }
-
-/* 3. SILICON VALLEY COMPACT GRID */
-.template-compact-grid { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.35; padding: 6%; }
-.template-compact-grid .resume-header { border-bottom: none; margin-bottom: 0.4rem; padding-bottom: 0; }
-.template-compact-grid .resume-header-left h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -1px; }
-.template-compact-grid .resume-header-left p.role { font-size: 0.9rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
-.template-compact-grid .resume-contacts { font-size: 0.75rem; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 0.4rem 0; margin-bottom: 0.8rem; justify-content: space-between; }
-.template-compact-grid .resume-section-title { font-size: 0.82rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; border-bottom: 2px solid var(--accent-color); margin-top: 0.8rem; margin-bottom: 0.3rem; }
-.template-compact-grid .resume-text { font-size: 0.79rem; }
-.template-compact-grid .resume-item-header { font-size: 0.82rem; }
-
-/* 4. IVY LEAGUE EXECUTIVE */
-.template-ivy-league { font-family: 'Georgia', serif; }
-.template-ivy-league .resume-header { flex-direction: column; text-align: center; border-bottom: 3px double var(--accent-color); padding-bottom: 1rem; margin-bottom: 1rem; }
-.template-ivy-league .resume-header-left h1 { font-size: 2rem; font-weight: normal; letter-spacing: 2px; text-transform: uppercase; }
-.template-ivy-league .resume-header-left p.role { font-style: italic; font-size: 0.95rem; margin-top: 0.2rem; }
-.template-ivy-league .resume-contacts { justify-content: center; font-size: 0.8rem; margin-top: 0.4rem; }
-.template-ivy-league .resume-section-title { font-size: 0.9rem; text-align: center; letter-spacing: 1.5px; text-transform: uppercase; border-bottom: 1px solid #333; margin-top: 1.2rem; margin-bottom: 0.6rem; padding-bottom: 0.2rem; }
-.template-ivy-league .resume-avatar { display: none !important; }
-
-/* 5. MODERN MINIMAL */
-.template-modern { font-family: 'Segoe UI', Tahoma, sans-serif; }
-.template-modern .resume-header-left h1 { font-size: 1.6rem; font-weight: 800; text-transform: uppercase; }
-.template-modern .resume-section-title { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--accent-color); margin-top: 1rem; margin-bottom: 0.4rem; }
-
-/* 6. EXECUTIVE CLEAN */
-.template-minimal { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-.template-minimal .resume-header { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.template-minimal .resume-header-left h1 { font-size: 2rem; font-weight: 300; letter-spacing: -1px; }
-.template-minimal .resume-header-left p.role { font-weight: bold; font-size: 1rem; margin-bottom: 0.8rem; color: var(--accent-color); }
-.template-minimal .resume-section-title { font-size: 0.85rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; border-bottom: none; margin-top: 1.4rem; color: var(--accent-color); }
-
-/* Template Selector Gallery Modal */
-.template-selection-screen {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(10, 10, 12, 0.9);
-    backdrop-filter: blur(8px);
-    z-index: 1200;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1.5rem;
-}
-.template-selection-screen.hidden { display: none; }
-.template-modal-content {
-    background: var(--container-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 2.5rem 2rem;
-    max-width: 1050px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    text-align: center;
-}
-.template-modal-content h2 { font-size: 2rem; margin-bottom: 0.4rem; }
-.template-modal-content p { color: var(--text-muted); margin-bottom: 2rem; }
-.template-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-.template-card {
-    background: var(--bg-color);
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    padding: 1.4rem 1.2rem;
-    cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
-    display: flex; flex-direction: column; align-items: center;
-}
-.template-card:hover { border-color: var(--primary-color); transform: translateY(-4px); }
-.template-card h4 { font-size: 1.1rem; margin-bottom: 0.4rem; }
-.template-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4; }
-
-.template-thumb { width: 100%; height: 160px; background: #ffffff; border-radius: 6px; margin-bottom: 1.2rem; display: flex; overflow: hidden; border: 1px solid #cbd5e1; }
-.thumb-split .thumb-sidebar-dark { width: 32%; background: #0f172a; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
-.thumb-split .thumb-body { width: 68%; padding: 12px; }
-.thumb-modern .thumb-sidebar { width: 28%; background: #2563eb; height: 100%; }
-.thumb-modern .thumb-body { width: 72%; padding: 12px; }
-.thumb-harvard .thumb-body, .thumb-compact .thumb-body, .thumb-ivy .thumb-body, .thumb-minimal .thumb-body { width: 100%; padding: 12px; }
-
-.thumb-line { height: 5px; background: #94a3b8; border-radius: 3px; margin-bottom: 8px; }
-.thumb-divider { height: 1px; background: #cbd5e1; margin: 8px 0; }
-.w-40 { width: 40%; } .w-50 { width: 50%; } .w-60 { width: 60%; } .w-70 { width: 70%; } .w-80 { width: 80%; } .w-90 { width: 90%; } .w-100 { width: 100%; }
-.center { margin-left: auto; margin-right: auto; }
-.btn-primary-small { background: var(--primary-color); color: #fff; border: none; border-radius: 6px; padding: 0.55rem 1.2rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; }
-
-/* Mobile Preview Modal & FAB */
-.mobile-fab { 
-    display: none; 
-    position: fixed; 
-    bottom: 20px; right: 20px; 
-    background: var(--primary-color); 
-    color: white; border: none; 
-    border-radius: 30px; 
-    padding: 0.9rem 1.4rem; 
-    font-weight: bold; font-size: 0.95rem; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-    z-index: 99; cursor: pointer; 
-}
-.close-modal-btn { display: none; position: absolute; top: 15px; right: 15px; background: #ff4d4d; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; font-weight: bold; z-index: 1001; cursor: pointer; }
-
-@media (max-width: 960px) {
-    .tool-container { grid-template-columns: 1fr; height: auto; }
-    .preview-side { display: none; }
-    .mobile-fab { display: flex; }
-    .preview-side.modal-active { 
-        display: flex; position: fixed; 
-        top: 0; left: 0; 
-        width: 100vw; height: 100vh; 
-        z-index: 1000; border-radius: 0; 
-        background: rgba(0, 0, 0, 0.92); 
-        padding: 4rem 1rem 1.5rem 1rem; 
-        overflow-y: auto; 
+    let pct = 0;
+    if (currentStep === 1) {
+        pct = (currentQuestionIndex / totalStep1Questions) * 20;
+    } else {
+        pct = 20 + ((currentStep - 1) / (totalSteps - 1)) * 80;
     }
-    .preview-side.modal-active .close-modal-btn { display: block; }
-    .preview-side.modal-active .preview-wrapper { width: 100%; overflow-x: auto; display: block; padding: 0.5rem; }
-    .preview-side.modal-active .resume-print-target { width: 100%; min-width: 320px; min-height: auto; padding: 1.2rem; }
+    document.getElementById('question-progress-bar').style.width = `${pct}%`;
+
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (currentStep === 1 && currentQuestionIndex === 1) {
+        prevBtn.style.visibility = 'hidden';
+    } else {
+        prevBtn.style.visibility = 'visible';
+    }
+
+    if (currentStep === totalSteps) {
+        nextBtn.style.display = 'none';
+    } else {
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.textContent = (currentStep === 1 && currentQuestionIndex < totalStep1Questions) ? 'Next Question ➜' : 'Next Section ➜';
+    }
 }
 
-@media (max-width: 768px) {
-    header { padding: 0.8rem 1.2rem; }
-    .home-hero h1 { font-size: 2.2rem; }
-    .home-hero { padding: 3rem 1rem 2rem 1rem; }
-    .features-grid { grid-template-columns: 1fr; gap: 1.2rem; }
-    .step-dot { width: 32px; height: 32px; font-size: 0.85rem; }
-    .form-side { padding: 1.2rem 1rem; }
-    .question-card { padding: 1.5rem 1.2rem; }
+function handleNextQuestion() {
+    if (currentStep === 1) {
+        const activeCard = document.querySelector(`.form-step[data-step="1"] .question-card[data-q="${currentQuestionIndex}"]`);
+        const requiredField = activeCard?.querySelector('.required-field');
+        
+        if (requiredField && !requiredField.value.trim()) {
+            requiredField.focus();
+            requiredField.style.borderColor = '#ff3333';
+            return showToast("Please answer this question before moving forward!");
+        } else if (requiredField) {
+            requiredField.style.borderColor = '';
+        }
+
+        if (currentQuestionIndex < totalStep1Questions) {
+            activeCard.classList.remove('active');
+            currentQuestionIndex++;
+            const nextCard = document.querySelector(`.form-step[data-step="1"] .question-card[data-q="${currentQuestionIndex}"]`);
+            nextCard.classList.add('active');
+            nextCard.querySelector('input, textarea')?.focus();
+            updateProgressVisuals();
+            return;
+        }
+    }
+
+    if (currentStep < totalSteps) {
+        jumpToStep(currentStep + 1);
+    }
 }
 
-#toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1300; }
-.toast { background-color: #ff3333; color: white; padding: 0.8rem 1.2rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s forwards; }
-@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+function handlePreviousQuestion() {
+    if (currentStep === 1) {
+        if (currentQuestionIndex > 1) {
+            document.querySelector(`.form-step[data-step="1"] .question-card[data-q="${currentQuestionIndex}"]`).classList.remove('active');
+            currentQuestionIndex--;
+            const prevCard = document.querySelector(`.form-step[data-step="1"] .question-card[data-q="${currentQuestionIndex}"]`);
+            prevCard.classList.add('active');
+            prevCard.querySelector('input, textarea')?.focus();
+            updateProgressVisuals();
+            return;
+        }
+    } else {
+        jumpToStep(currentStep - 1);
+    }
+}
+
+function jumpToStep(step) {
+    document.querySelector('.form-step.active')?.classList.remove('active');
+    currentStep = step;
+    
+    const targetStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    targetStepEl.classList.add('active');
+
+    if (currentStep === 1) {
+        currentQuestionIndex = 1;
+        targetStepEl.querySelectorAll('.question-card').forEach((qc, idx) => {
+            qc.classList.toggle('active', idx === 0);
+        });
+        targetStepEl.querySelector('.question-card.active input')?.focus();
+    } else {
+        targetStepEl.querySelector('.question-card')?.classList.add('active');
+    }
+
+    updateProgressVisuals();
+}
+
+// Keydown Enter to Advance
+document.getElementById('resume-form').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        handleNextQuestion();
+    }
+});
+
+// Real-Time Preview Sync (Coordinates Header & 2-Col Sidebar)
+function syncText(inputId, previewId, fallbackText) {
+    document.getElementById(inputId)?.addEventListener('input', (e) => {
+        document.getElementById(previewId).textContent = e.target.value.trim() || fallbackText;
+    });
+}
+syncText('in-name', 'p-name', 'YOUR FULL NAME');
+syncText('in-role', 'p-role', 'Target Professional Role');
+syncText('in-email', 'p-email', '📧 email@example.com');
+syncText('in-phone', 'p-phone', '📞 +00 00000000');
+syncText('in-summary', 'p-summary', 'Your high-level objectives and career metrics go here...');
+syncText('in-skills', 'p-skills', 'Core Competencies listing...');
+syncText('in-additional', 'p-additional', 'Languages, accomplishments...');
+
+function syncContactsAndSidebar() {
+    const email = document.getElementById('in-email').value.trim() || 'email@example.com';
+    const phone = document.getElementById('in-phone').value.trim() || '+1 234 567 890';
+    const loc = document.getElementById('in-city').value.trim();
+    const link = document.getElementById('in-linkedin').value.trim();
+    const git = document.getElementById('in-github').value.trim();
+    
+    const locEl = document.getElementById('p-location');
+    const linkEl = document.getElementById('p-linkedin');
+    const gitEl = document.getElementById('p-github');
+    
+    locEl.textContent = `📍 ${loc}`; locEl.style.display = loc ? 'inline' : 'none';
+    linkEl.textContent = `🔗 ${link}`; linkEl.style.display = link ? 'inline' : 'none';
+    gitEl.textContent = `🐙 ${git}`; gitEl.style.display = git ? 'inline' : 'none';
+
+    // Populate Sidebar for Split Templates
+    const sidebarContacts = document.getElementById('sidebar-contacts-list');
+    if (sidebarContacts) {
+        sidebarContacts.innerHTML = `
+            <div>📧 ${email}</div>
+            <div>📞 ${phone}</div>
+            ${loc ? `<div>📍 ${loc}</div>` : ''}
+            ${link ? `<div>🔗 ${link}</div>` : ''}
+            ${git ? `<div>🐙 ${git}</div>` : ''}
+        `;
+    }
+}
+['in-email', 'in-phone', 'in-city', 'in-linkedin', 'in-github'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', syncContactsAndSidebar);
+});
+
+document.getElementById('in-photo').addEventListener('change', e => {
+    const file = e.target.files[0];
+    const previewImg = document.getElementById('p-avatar');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = event => { 
+            previewImg.src = event.target.result; 
+            previewImg.style.display = 'block'; 
+        };
+        reader.readAsDataURL(file);
+    } else { 
+        previewImg.style.display = 'none'; 
+    }
+});
+
+document.getElementById('in-skills').addEventListener('input', e => {
+    const val = e.target.value.trim();
+    document.getElementById('sec-skills').style.display = val ? 'block' : 'none';
+    const sidebarSkills = document.getElementById('sidebar-skills-content');
+    if (sidebarSkills) sidebarSkills.textContent = val || 'Core Skills';
+});
+
+document.getElementById('in-additional').addEventListener('input', e => {
+    document.getElementById('sec-additional').style.display = e.target.value.trim() ? 'block' : 'none';
+});
+
+// Dynamic Blocks (Work & Education)
+let expCount = 0;
+function addExperienceBlock() {
+    expCount++;
+    const id = expCount;
+    const div = document.createElement('div');
+    div.className = 'dynamic-wrapper';
+    div.id = `exp-input-block-${id}`;
+    div.innerHTML = `
+        <button type="button" class="btn-delete" onclick="deleteBlock('exp-input-block-${id}', syncExperiencePreview)">🗑️ Delete</button>
+        <div class="form-group"><label>Company Name</label><input type="text" id="exp-comp-${id}" placeholder="Google / Microsoft"></div>
+        <div class="form-group"><label>Role / Position</label><input type="text" id="exp-role-${id}" placeholder="Senior Engineer"></div>
+        <div class="form-group"><label>Start Date</label><input type="text" id="exp-start-${id}" placeholder="Jan 2022"></div>
+        <div class="form-group"><label>End Date</label><input type="text" id="exp-end-${id}" placeholder="Present"></div>
+        <div class="form-group" style="grid-column: 1 / -1;"><label>Key Achievements</label><textarea id="exp-desc-${id}" rows="3" placeholder="Engineered 40% performance gain via distributed caching..."></textarea></div>
+    `;
+    document.getElementById('experience-container').appendChild(div);
+    [`exp-comp-${id}`, `exp-role-${id}`, `exp-start-${id}`, `exp-end-${id}`, `exp-desc-${id}`].forEach(fid => {
+        document.getElementById(fid)?.addEventListener('input', syncExperiencePreview);
+    });
+    syncExperiencePreview();
+}
+
+function syncExperiencePreview() {
+    const pList = document.getElementById('p-experience-list');
+    pList.innerHTML = "";
+    let hasContent = false;
+    
+    document.querySelectorAll('#experience-container .dynamic-wrapper').forEach(block => {
+        const id = block.id.replace('exp-input-block-', '');
+        const comp = document.getElementById(`exp-comp-${id}`)?.value.trim() || '';
+        const role = document.getElementById(`exp-role-${id}`)?.value.trim() || '';
+        const start = document.getElementById(`exp-start-${id}`)?.value.trim() || '';
+        const end = document.getElementById(`exp-end-${id}`)?.value.trim() || '';
+        const desc = document.getElementById(`exp-desc-${id}`)?.value.trim() || '';
+        
+        let bullets = desc ? `<ul style="margin-top:4px; padding-left:18px; font-size:0.83rem;">${desc.split('\n').filter(b => b.trim()).map(b => `<li style="margin-bottom:2px;">${b}</li>`).join('')}</ul>` : "";
+        if (comp || role) {
+            hasContent = true;
+            pList.innerHTML += `
+                <div class="resume-item">
+                    <div class="resume-item-header"><span>${role || 'Role'}</span><span>${comp || 'Company'}</span></div>
+                    <div class="resume-item-sub"><span>📅 ${start || 'Start'} - ${end || 'End'}</span></div>
+                    ${bullets}
+                </div>`;
+        }
+    });
+    document.getElementById('sec-experience').style.display = hasContent ? 'block' : 'none';
+}
+
+let eduCount = 0;
+function addEducationBlock() {
+    eduCount++;
+    const id = eduCount;
+    const div = document.createElement('div');
+    div.className = 'dynamic-wrapper';
+    div.id = `edu-input-block-${id}`;
+    div.innerHTML = `
+        <button type="button" class="btn-delete" onclick="deleteBlock('edu-input-block-${id}', syncEducationPreview)">🗑️ Delete</button>
+        <div class="form-group"><label>Institution / University</label><input type="text" id="edu-name-${id}" placeholder="Stanford University"></div>
+        <div class="form-group"><label>Degree / Field of Study</label><input type="text" id="edu-deg-${id}" placeholder="B.S. Computer Science"></div>
+        <div class="form-group"><label>Graduation Year</label><input type="text" id="edu-date-${id}" placeholder="May 2021"></div>
+    `;
+    document.getElementById('education-container').appendChild(div);
+    [`edu-name-${id}`, `edu-deg-${id}`, `edu-date-${id}`].forEach(fid => {
+        document.getElementById(fid)?.addEventListener('input', syncEducationPreview);
+    });
+    syncEducationPreview();
+}
+
+function syncEducationPreview() {
+    const pList = document.getElementById('p-education-list');
+    pList.innerHTML = "";
+    let hasContent = false;
+    
+    document.querySelectorAll('#education-container .dynamic-wrapper').forEach(block => {
+        const id = block.id.replace('edu-input-block-', '');
+        const name = document.getElementById(`edu-name-${id}`)?.value.trim() || '';
+        const deg = document.getElementById(`edu-deg-${id}`)?.value.trim() || '';
+        const date = document.getElementById(`edu-date-${id}`)?.value.trim() || '';
+        if (name || deg) {
+            hasContent = true;
+            pList.innerHTML += `
+                <div class="resume-item">
+                    <div class="resume-item-header"><span>${deg || 'Degree'}</span><span>${name || 'Institution'}</span></div>
+                    <div class="resume-item-sub"><span>🎓 ${date || 'N/A'}</span></div>
+                </div>`;
+        }
+    });
+    document.getElementById('sec-education').style.display = hasContent ? 'block' : 'none';
+}
+
+function deleteBlock(blockId, syncFunction) {
+    document.getElementById(blockId)?.remove();
+    syncFunction();
+    saveToLocalStorage();
+}
+
+// Styling Engine
+function setAccentColor(color) {
+    document.querySelector('.resume-print-target').style.setProperty('--accent-color', color);
+    const picker = document.getElementById('accent-color-picker');
+    if (picker) picker.value = color;
+    saveToLocalStorage();
+}
+document.getElementById('accent-color-picker').addEventListener('input', e => setAccentColor(e.target.value));
+
+document.getElementById('template-selector').addEventListener('change', e => {
+    const target = document.querySelector('.resume-print-target');
+    allTemplateClasses.forEach(cls => target.classList.remove(cls));
+    target.classList.add(e.target.value);
+    saveToLocalStorage();
+});
+
+// PDF Exporter
+function downloadPDF() {
+    const element = document.getElementById('resume-capture-node');
+    const originalWidth = element.style.width;
+    element.style.width = '794px';
+    
+    const opt = { 
+        margin: 0, 
+        filename: 'DocMust_Resume.pdf', 
+        image: { type: 'jpeg', quality: 0.98 }, 
+        html2canvas: { scale: 2, useCORS: true }, 
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+    };
+    html2pdf().set(opt).from(element).save().then(() => {
+        element.style.width = originalWidth;
+    });
+}
+
+// Mobile Live Preview Modal Handlers
+document.getElementById('mobile-fab-btn').addEventListener('click', () => {
+    document.getElementById('mobile-preview-modal').classList.add('modal-active');
+});
+document.getElementById('close-modal-btn').addEventListener('click', () => {
+    document.getElementById('mobile-preview-modal').classList.remove('modal-active');
+});
+
+// Sample Data
+function loadSampleData() {
+    clearData(false);
+    const sample = {
+        "in-name": "Alex Sterling", 
+        "in-role": "Senior Frontend Developer", 
+        "in-email": "alex.sterling@example.com", 
+        "in-phone": "+1 555-0198",
+        "in-summary": "Results-oriented Web Developer with 5+ years of experience building high-performance, accessible web apps. Specialized in React, TypeScript, and high-conversion design systems.",
+        "in-city": "San Francisco, CA", 
+        "in-linkedin": "linkedin.com/in/alexsterling",
+        "in-skills": "JavaScript (ES6+), React.js, TypeScript\nHTML5, CSS3, TailwindCSS\nGit, Webpack, Agile & CI/CD",
+        "exp-comp-1": "TechFlow Solutions", 
+        "exp-role-1": "Lead Frontend Engineer", 
+        "exp-start-1": "2021", 
+        "exp-end-1": "Present", 
+        "exp-desc-1": "Architected component system used across 4 enterprise applications.\nReduced first-contentful-paint latency by 45% via code splitting.\nMentored 5 junior developers in accessible front-end architecture.",
+        "edu-name-1": "University of California, Berkeley", 
+        "edu-deg-1": "B.S. Computer Science", 
+        "edu-date-1": "2020"
+    };
+    
+    if (document.querySelectorAll('#experience-container .dynamic-wrapper').length === 0) addExperienceBlock();
+    if (document.querySelectorAll('#education-container .dynamic-wrapper').length === 0) addEducationBlock();
+    
+    Object.keys(sample).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) { 
+            el.value = sample[key]; 
+            el.dispatchEvent(new Event('input')); 
+        }
+    });
+    setAccentColor("#0f172a");
+    document.getElementById("template-selector").value = "template-tech-split";
+    document.getElementById("template-selector").dispatchEvent(new Event('change'));
+}
+
+function clearData(confirmPrompt = true) {
+    if (confirmPrompt && !confirm("Clear all entries? This cannot be undone.")) return;
+    document.getElementById('resume-form').reset();
+    document.getElementById('experience-container').innerHTML = '';
+    document.getElementById('education-container').innerHTML = '';
+    localStorage.removeItem('docmust_saved_resume');
+    addExperienceBlock(); 
+    addEducationBlock();
+    document.querySelectorAll('input, textarea').forEach(el => el.dispatchEvent(new Event('input')));
+    jumpToStep(1);
+}
+
+// Autosave System
+function saveToLocalStorage() {
+    const formData = {};
+    document.querySelectorAll('input:not([type="file"]), textarea, select').forEach(input => {
+        formData[input.id] = input.value;
+    });
+    localStorage.setItem('docmust_saved_resume', JSON.stringify(formData));
+}
+
+function loadFromLocalStorage() {
+    const saved = localStorage.getItem('docmust_saved_resume');
+    if (saved) {
+        const formData = JSON.parse(saved);
+        const expKeys = Object.keys(formData).filter(k => k.startsWith('exp-comp-'));
+        const eduKeys = Object.keys(formData).filter(k => k.startsWith('edu-name-'));
+        
+        while (document.querySelectorAll('#experience-container .dynamic-wrapper').length < expKeys.length) addExperienceBlock();
+        while (document.querySelectorAll('#education-container .dynamic-wrapper').length < eduKeys.length) addEducationBlock();
+        
+        for (const [id, value] of Object.entries(formData)) {
+            const input = document.getElementById(id);
+            if (input && value) { 
+                input.value = value; 
+                input.dispatchEvent(new Event('input', { bubbles: true })); 
+                input.dispatchEvent(new Event('change', { bubbles: true })); 
+            }
+        }
+        if (formData['accent-color-picker']) setAccentColor(formData['accent-color-picker']);
+        if (formData['template-selector']) {
+            const target = document.querySelector('.resume-print-target');
+            allTemplateClasses.forEach(cls => target.classList.remove(cls));
+            target.classList.add(formData['template-selector']);
+        }
+    } else {
+        addExperienceBlock(); 
+        addEducationBlock();
+    }
+    syncContactsAndSidebar();
+    updateProgressVisuals();
+}
+document.getElementById('resume-form').addEventListener('input', saveToLocalStorage);
+window.addEventListener('DOMContentLoaded', loadFromLocalStorage);
 
 /* Cover Letter Engine */
-.cl-document { padding: 10% 12%; }
-.cl-header { text-align: center; border-bottom: 2px solid var(--accent-color); padding-bottom: 1.5rem; margin-bottom: 2rem; }
-.cl-header h1 { font-size: 1.8rem; color: var(--accent-color) !important; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 1px; }
-.cl-contacts { font-size: 0.9rem; color: #555; }
-.cl-date, .cl-recipient, .cl-salutation { margin-bottom: 1.5rem; font-size: 0.95rem; color: #222; }
-.cl-body { line-height: 1.7; font-size: 0.95rem; margin-bottom: 2.5rem; white-space: pre-line; color: #333; }
-.cl-signoff { font-size: 0.95rem; line-height: 1.5; color: #222; }
+const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+document.getElementById('cl-today-date').textContent = new Date().toLocaleDateString('en-US', dateOptions);
 
-/* --- Enhanced Original About & Contact Sections --- */
-.about-content, .contact-content { 
-    background-color: var(--container-bg); 
-    padding: 4rem; 
-    border-radius: 12px; 
-    max-width: 900px; 
-    margin: 2rem auto; 
-    border: 1px solid var(--border-color); 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-}
-.about-content h2, .contact-content h2 { 
-    color: var(--text-color); 
-    margin-bottom: 1.5rem; 
-    font-size: 2rem; 
-}
-.about-content p { 
-    line-height: 1.7; 
-    margin-bottom: 1.2rem; 
-    color: var(--text-muted); 
-    font-size: 1.05rem; 
-}
+syncText('cl-in-manager', 'cl-p-hiring-manager', 'Hiring Manager Name');
+syncText('cl-in-manager', 'cl-p-salutation-name', 'Hiring Manager');
+syncText('cl-in-company', 'cl-p-company', 'Company Name');
+syncText('cl-in-address', 'cl-p-company-address', 'Company Address');
+syncText('cl-in-body', 'cl-p-body', 'Your professional cover letter body will appear here.');
 
-/* Contact Grid & Credits */
-.contact-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 3rem; 
-    margin-top: 2.5rem; 
-    align-items: start; 
+function syncSenderInfoToCL() {
+    const name = document.getElementById('in-name')?.value.trim() || 'YOUR FULL NAME';
+    document.getElementById('cl-sender-name').textContent = name;
+    document.getElementById('cl-p-signoff-name').textContent = name;
+    
+    const email = document.getElementById('in-email')?.value.trim() || 'email@example.com';
+    const phone = document.getElementById('in-phone')?.value.trim() || '+1 234 567 890';
+    document.getElementById('cl-sender-email').textContent = email;
+    document.getElementById('cl-sender-phone').textContent = phone;
 }
-.contact-info p { 
-    margin-bottom: 0.8rem; 
-    color: var(--text-muted); 
-    font-size: 1.05rem; 
-}
-.contact-credits { 
-    background: var(--bg-color); 
-    padding: 2rem; 
-    border-radius: 8px; 
-    border: 1px solid var(--border-color); 
-    border-left: 4px solid var(--primary-color); 
-}
-.contact-credits p { 
-    color: var(--text-muted); 
-    line-height: 1.6; 
-    font-size: 0.95rem; 
-    margin-top: 0.5rem; 
+['in-name', 'in-email', 'in-phone'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', syncSenderInfoToCL);
+});
+window.addEventListener('DOMContentLoaded', () => setTimeout(syncSenderInfoToCL, 150));
+
+function loadSampleCoverLetter() {
+    const sample = {
+        "cl-in-manager": "Sarah Jenkins",
+        "cl-in-company": "TechFlow Solutions",
+        "cl-in-address": "404 Innovation Drive, San Francisco, CA",
+        "cl-in-body": "I am writing to express my enthusiasm for the Senior Developer position at TechFlow Solutions. With over 5 years of experience building scalable web applications and optimizing responsive interfaces, I am confident in my ability to immediately contribute to your engineering goals.\n\nThank you for your time and consideration."
+    };
+    Object.keys(sample).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) { el.value = sample[key]; el.dispatchEvent(new Event('input')); }
+    });
+    syncSenderInfoToCL();
 }
 
-/* Smooth Zoom-In Animation for Contact Credits */
-@keyframes smoothZoomIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.95) translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.page-section.active .contact-credits {
-    animation: smoothZoomIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    animation-delay: 0.1s; 
-    opacity: 0; 
-}
-
-@media (max-width: 768px) {
-    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .about-content, .contact-content { padding: 2rem; }
+function downloadCLPDF() {
+    const element = document.getElementById('cl-capture-node');
+    const originalWidth = element.style.width;
+    element.style.width = '794px';
+    const opt = { 
+        margin: 0, 
+        filename: 'DocMust_CoverLetter.pdf', 
+        image: { type: 'jpeg', quality: 0.98 }, 
+        html2canvas: { scale: 2, useCORS: true }, 
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+    };
+    html2pdf().set(opt).from(element).save().then(() => element.style.width = originalWidth);
 }
