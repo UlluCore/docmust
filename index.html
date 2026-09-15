@@ -4,21 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DocMust - Premium Resume Maker</title>
+    <!-- Gamma Style Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
+    <!-- Header (Two-Tone Logo) -->
+    <header class="glass-header">
         <div class="logo" style="cursor: pointer;" onclick="navigateToSection('home')">Doc<span>Must</span></div>
         <div class="nav-actions">
-            <button class="theme-toggle" id="theme-btn" title="Toggle Mode">🌙</button>
+            <button class="theme-toggle" id="theme-btn" title="Toggle Mode">
+                <i class="ph ph-moon"></i>
+            </button>
             <button class="hamburger" id="menu-btn" aria-label="Toggle Navigation">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
         </div>
         <nav class="nav-menu" id="nav-drawer">
@@ -32,179 +36,137 @@
 
     <div id="toast-container"></div>
 
-    <!-- Template Selection Screen / Modal -->
+    <!-- Template Selection Screen / Glass Modal -->
     <div id="template-modal" class="template-selection-screen hidden">
-        <div class="template-modal-content">
-            <h2>Pick a resume template</h2>
+        <div class="template-modal-content fade-in-up">
+            <h2>Pick a resume blueprint.</h2>
             <p>Select a structure engineered for recruiter scanning and ATS optimization.</p>
             
             <div class="template-cards-grid">
-                <!-- Template 1: Tech Split -->
                 <div class="template-card" onclick="selectInitialTemplate('template-tech-split', '#0f172a')">
                     <div class="template-thumb thumb-split">
                         <div class="thumb-sidebar-dark">
-                            <div class="thumb-line w-80" style="background:#475569;"></div>
-                            <div class="thumb-line w-60" style="background:#475569;"></div>
+                            <div class="thumb-line w-80" style="background:rgba(255,255,255,0.2);"></div>
+                            <div class="thumb-line w-60" style="background:rgba(255,255,255,0.2);"></div>
                         </div>
                         <div class="thumb-body">
-                            <div class="thumb-line w-70"></div>
-                            <div class="thumb-divider"></div>
-                            <div class="thumb-line w-100"></div>
-                            <div class="thumb-line w-90"></div>
+                            <div class="thumb-line w-70"></div><div class="thumb-divider"></div>
+                            <div class="thumb-line w-100"></div><div class="thumb-line w-90"></div>
                         </div>
                     </div>
                     <h4>Tech Split (2-Column)</h4>
-                    <p class="template-desc">Sidebar for skills and contacts; wide panel for achievements.</p>
-                    <button type="button" class="btn-primary-small">Use Template</button>
+                    <p class="template-desc">Sidebar for skills; wide panel for achievements.</p>
                 </div>
 
-                <!-- Template 2: Harvard Classic -->
                 <div class="template-card" onclick="selectInitialTemplate('template-harvard', '#111111')">
                     <div class="template-thumb thumb-harvard">
                         <div class="thumb-body">
-                            <div class="thumb-line w-50 center"></div>
-                            <div class="thumb-divider"></div>
-                            <div class="thumb-line w-90"></div>
-                            <div class="thumb-line w-100"></div>
-                            <div class="thumb-line w-80"></div>
+                            <div class="thumb-line w-50 center"></div><div class="thumb-divider"></div>
+                            <div class="thumb-line w-90"></div><div class="thumb-line w-100"></div>
                         </div>
                     </div>
                     <h4>Harvard Classic</h4>
-                    <p class="template-desc">Traditional single-column layout engineered for high ATS pass rates.</p>
-                    <button type="button" class="btn-primary-small">Use Template</button>
+                    <p class="template-desc">Traditional single-column layout for high ATS pass rates.</p>
                 </div>
 
-                <!-- Template 3: Silicon Valley Compact Grid -->
                 <div class="template-card" onclick="selectInitialTemplate('template-compact-grid', '#0284c7')">
                     <div class="template-thumb thumb-compact">
                         <div class="thumb-body">
-                            <div class="thumb-line w-40" style="background:#0284c7;"></div>
-                            <div class="thumb-line w-90"></div>
-                            <div class="thumb-divider"></div>
-                            <div class="thumb-line w-100"></div>
-                            <div class="thumb-line w-100"></div>
+                            <div class="thumb-line w-40" style="background:#0284c7;"></div><div class="thumb-line w-90"></div>
+                            <div class="thumb-divider"></div><div class="thumb-line w-100"></div>
                         </div>
                     </div>
                     <h4>Silicon Valley Compact</h4>
-                    <p class="template-desc">High-density layout designed for developers and technical leads.</p>
-                    <button type="button" class="btn-primary-small">Use Template</button>
+                    <p class="template-desc">High-density layout designed for technical leads.</p>
                 </div>
 
-                <!-- Template 4: Ivy League Wall Street -->
                 <div class="template-card" onclick="selectInitialTemplate('template-ivy-league', '#881337')">
                     <div class="template-thumb thumb-ivy">
                         <div class="thumb-body">
                             <div class="thumb-line w-60 center" style="background:#881337;"></div>
                             <div class="thumb-divider" style="border-top: 2px double #881337;"></div>
-                            <div class="thumb-line w-100"></div>
-                            <div class="thumb-line w-85"></div>
+                            <div class="thumb-line w-100"></div><div class="thumb-line w-85"></div>
                         </div>
                     </div>
                     <h4>Ivy League Executive</h4>
-                    <p class="template-desc">Formal serif styling tailored for Consulting, Finance, and Legal roles.</p>
-                    <button type="button" class="btn-primary-small">Use Template</button>
+                    <p class="template-desc">Formal serif styling for Consulting and Finance.</p>
                 </div>
 
-                <!-- Template 5: Modern Minimal -->
                 <div class="template-card" onclick="selectInitialTemplate('template-modern', '#2563eb')">
                     <div class="template-thumb thumb-modern">
-                        <div class="thumb-sidebar"></div>
+                        <div class="thumb-sidebar" style="background:#2563eb;"></div>
                         <div class="thumb-body">
-                            <div class="thumb-line w-60"></div>
-                            <div class="thumb-line w-40"></div>
-                            <div class="thumb-divider"></div>
-                            <div class="thumb-line w-90"></div>
+                            <div class="thumb-line w-60"></div><div class="thumb-line w-40"></div>
+                            <div class="thumb-divider"></div><div class="thumb-line w-90"></div>
                         </div>
                     </div>
                     <h4>Modern Minimal</h4>
-                    <p class="template-desc">Contemporary headers and clean section breaks for all domains.</p>
-                    <button type="button" class="btn-primary-small">Use Template</button>
+                    <p class="template-desc">Contemporary headers and clean section breaks.</p>
                 </div>
 
-                <!-- Template 6: Executive Clean -->
                 <div class="template-card" onclick="selectInitialTemplate('template-minimal', '#065f46')">
                     <div class="template-thumb thumb-minimal">
                         <div class="thumb-body">
-                            <div class="thumb-line w-40" style="background:#065f46;"></div>
-                            <div class="thumb-line w-70"></div>
-                            <div class="thumb-divider"></div>
-                            <div class="thumb-line w-100"></div>
+                            <div class="thumb-line w-40" style="background:#065f46;"></div><div class="thumb-line w-70"></div>
+                            <div class="thumb-divider"></div><div class="thumb-line w-100"></div>
                         </div>
                     </div>
                     <h4>Executive Clean</h4>
-                    <p class="template-desc">Light typography built for senior directors and project managers.</p>
-                    <button type="button" class="btn-primary-small">Use Template</button>
+                    <p class="template-desc">Light typography built for senior directors.</p>
                 </div>
             </div>
-            
-            <button type="button" class="btn-secondary" style="margin-top: 2rem;" onclick="document.getElementById('template-modal').classList.add('hidden')">Close & Continue</button>
+            <button type="button" class="btn-ghost" style="margin-top: 2rem;" onclick="document.getElementById('template-modal').classList.add('hidden')">Close & Continue</button>
         </div>
     </div>
 
     <!-- Home Section -->
     <section id="home" class="page-section active">
         <div class="home-hero">
-            <h1>Build a Resume that <span>Demands Attention</span></h1>
-            <p>
-                Recruiter-vetted templates, one-by-one guided questions, and instant ATS-compliant exports.
-            </p>
-            <div class="hero-actions">
-                <button class="btn-primary" onclick="openTemplatePicker()">
-                    <i class="ph ph-magic-wand"></i> Pick Template & Start
-                </button>
+            <div class="hero-glow"></div>
+            <div class="hero-content fade-in-up">
+                <span class="hero-pill"><i class="ph-fill ph-sparkle"></i> AI-Powered Formatting</span>
+                <h1>Build a resume that <br><span>demands attention.</span></h1>
+                <p>Recruiter-vetted templates, seamless one-by-one guided questions, and instant ATS-compliant PDF exports.</p>
+                <div class="hero-actions">
+                    <button class="btn-primary btn-large" onclick="openTemplatePicker()">
+                        Start Building Free <i class="ph ph-arrow-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- 6 PROFESSIONAL BENEFITS & FEATURES -->
-        <div class="how-it-works-container">
-            <h2>Why Professionals Choose DocMust</h2>
+        <div class="how-it-works-container fade-in-up" style="animation-delay: 0.2s;">
+            <h2>Why top professionals use DocMust</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="m9 12 2 2 4-4"/></svg>
-                    </div>
-                    <h3>1. ATS-Engineered Formats</h3>
-                    <p>Clean structural hierarchies and standardized font encodings that pass through Taleo, Workday, and Greenhouse without garbling.</p>
+                    <div class="feature-icon-wrapper"><i class="ph ph-check-circle"></i></div>
+                    <h3>ATS-Engineered</h3>
+                    <p>Clean structural hierarchies and standardized fonts that pass through Workday and Greenhouse without garbling.</p>
                 </div>
-
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <h3>2. 100% Client-Side Privacy</h3>
-                    <p>Your resume data never touches a remote database. Local sandboxed processing guarantees total confidentiality for your work history.</p>
+                    <div class="feature-icon-wrapper"><i class="ph ph-shield-check"></i></div>
+                    <h3>100% Client-Side Privacy</h3>
+                    <p>Your resume data never touches a remote database. Local sandboxed processing guarantees total confidentiality.</p>
                 </div>
-
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                    <h3>3. Guided 1-by-1 Questions</h3>
-                    <p>Avoid intimidating, complex forms. Our conversational builder prompts for details step by step to eliminate resume drafting fatigue.</p>
+                    <div class="feature-icon-wrapper"><i class="ph ph-chat-teardrop-text"></i></div>
+                    <h3>Guided Flow</h3>
+                    <p>Avoid intimidating forms. Our conversational builder prompts for details step by step to eliminate drafting fatigue.</p>
                 </div>
-
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    </div>
-                    <h3>4. Unified Cover Letter Sync</h3>
-                    <p>Never re-type contact headers. Information entered into your resume is synchronized in real time into your formal cover letter.</p>
+                    <div class="feature-icon-wrapper"><i class="ph ph-arrows-merge"></i></div>
+                    <h3>Cover Letter Sync</h3>
+                    <p>Never re-type contact headers. Information entered into your resume syncs in real time into your formal cover letter.</p>
                 </div>
-
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
-                    </div>
-                    <h3>5. Zero Hidden Paywalls</h3>
+                    <div class="feature-icon-wrapper"><i class="ph ph-lock-key-open"></i></div>
+                    <h3>Zero Paywalls</h3>
                     <p>Download pristine vector PDFs immediately without surprise payment modals, watermarks, or compulsory subscriptions.</p>
                 </div>
-
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
-                    </div>
-                    <h3>6. Instant Vector PDF Render</h3>
-                    <p>Engineered with pixel precision using native canvas rendering to ensure clean line margins and print-ready clarity every single time.</p>
+                    <div class="feature-icon-wrapper"><i class="ph ph-file-pdf"></i></div>
+                    <h3>Instant Vector Render</h3>
+                    <p>Engineered with pixel precision using native canvas rendering to ensure clean print-ready clarity every time.</p>
                 </div>
             </div>
         </div>
@@ -216,8 +178,7 @@
             <!-- Left: Document Preview -->
             <div class="preview-side preview-sticky" id="resume-preview-side">
                 <div class="preview-wrapper" id="resume-capture-node">
-                    <div class="resume-print-target template-tech-split">
-                        
+                    <div class="resume-print-target template-tech-split" id="resume-document">
                         <div class="resume-header" id="sync-header">
                             <div class="resume-header-left">
                                 <h1 id="p-name">YOUR FULL NAME</h1>
@@ -225,7 +186,6 @@
                             </div>
                             <img id="p-avatar" class="resume-avatar" src="" alt="Profile Photo">
                         </div>
-
                         <div class="resume-contacts" id="p-contacts">
                             <span id="p-email">📧 email@example.com</span>
                             <span id="p-phone">📞 +00 00000000</span>
@@ -245,35 +205,29 @@
                                     <div class="sidebar-skills-content" id="sidebar-skills-content">Core Skills</div>
                                 </div>
                             </div>
-
                             <div class="resume-main-col">
                                 <div id="sec-summary" class="resume-section">
                                     <div class="resume-section-title">Professional Summary</div>
                                     <p class="resume-text" id="p-summary">Your career objectives and highlights go here...</p>
                                 </div>
-
                                 <div id="sec-experience" class="resume-section" style="display:none;">
                                     <div class="resume-section-title">Work Experience</div>
                                     <div id="p-experience-list"></div>
                                 </div>
-
                                 <div id="sec-education" class="resume-section" style="display:none;">
                                     <div class="resume-section-title">Education History</div>
                                     <div id="p-education-list"></div>
                                 </div>
-
                                 <div id="sec-skills" class="resume-section" style="display:none;">
                                     <div class="resume-section-title">Core Skills</div>
                                     <p class="resume-text" id="p-skills">Core competencies listing...</p>
                                 </div>
-
                                 <div id="sec-additional" class="resume-section" style="display:none;">
                                     <div class="resume-section-title">Additional Information</div>
                                     <p class="resume-text" id="p-additional">Languages, accomplishments, certifications...</p>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -281,23 +235,18 @@
             <!-- Right: Interactive Question Flow -->
             <div class="form-side" id="resume-form-side">
                 <div class="form-actions-top">
-                    <button type="button" class="btn-utility" onclick="openTemplatePicker()">🎨 Templates</button>
-                    <button type="button" class="btn-utility" onclick="loadSampleData()">✨ Sample</button>
-                    <button type="button" class="btn-utility" onclick="clearData()" style="color: #ff4d4d; border-color: #ff4d4d;">🗑️ Clear</button>
+                    <button type="button" class="btn-ghost btn-sm" onclick="openTemplatePicker()"><i class="ph ph-palette"></i> Templates</button>
+                    <button type="button" class="btn-ghost btn-sm" onclick="loadSampleData()"><i class="ph ph-magic-wand"></i> Sample</button>
+                    <button type="button" class="btn-ghost btn-sm text-danger" onclick="clearData()"><i class="ph ph-trash"></i> Clear</button>
                 </div>
 
                 <div class="breadcrumb-container">
                     <div class="breadcrumb-nav" id="breadcrumb-nav">
-                        <div class="step-dot active" onclick="jumpToStep(1)" title="Profile Info">1</div>
-                        <div class="step-line"></div>
-                        <div class="step-dot" onclick="jumpToStep(2)" title="Work Experience">2</div>
-                        <div class="step-line"></div>
-                        <div class="step-dot" onclick="jumpToStep(3)" title="Education">3</div>
-                        <div class="step-line"></div>
-                        <div class="step-dot" onclick="jumpToStep(4)" title="Skills">4</div>
-                        <div class="step-line"></div>
-                        <div class="step-dot" onclick="jumpToStep(5)" title="Additional">5</div>
-                        <div class="step-line"></div>
+                        <div class="step-dot active" onclick="jumpToStep(1)" title="Profile Info">1</div><div class="step-line"></div>
+                        <div class="step-dot" onclick="jumpToStep(2)" title="Work Experience">2</div><div class="step-line"></div>
+                        <div class="step-dot" onclick="jumpToStep(3)" title="Education">3</div><div class="step-line"></div>
+                        <div class="step-dot" onclick="jumpToStep(4)" title="Skills">4</div><div class="step-line"></div>
+                        <div class="step-dot" onclick="jumpToStep(5)" title="Additional">5</div><div class="step-line"></div>
                         <div class="step-dot" onclick="jumpToStep(6)" title="Design & Export">6</div>
                     </div>
                 </div>
@@ -311,66 +260,53 @@
                     <!-- STEP 1: Profile Info -->
                     <div class="form-step active" data-step="1">
                         <div class="question-card active" data-q="1">
-                            <span class="q-badge">Question 1 of 8</span>
+                            <span class="q-badge">1 / 8</span>
                             <h3>What is your full name?</h3>
                             <p class="q-hint">Displayed prominently at the top of your resume.</p>
                             <input type="text" id="in-name" class="required-field large-input" placeholder="e.g., Alex Sterling" autofocus>
                         </div>
-
                         <div class="question-card" data-q="2">
-                            <span class="q-badge">Question 2 of 8</span>
+                            <span class="q-badge">2 / 8</span>
                             <h3>What role or title are you targeting?</h3>
                             <p class="q-hint">e.g., Senior Systems Architect or Product Lead.</p>
                             <input type="text" id="in-role" class="required-field large-input" placeholder="e.g., Senior Frontend Developer">
                         </div>
-
                         <div class="question-card" data-q="3">
-                            <span class="q-badge">Question 3 of 8</span>
+                            <span class="q-badge">3 / 8</span>
                             <h3>What is your primary email address?</h3>
                             <p class="q-hint">Keep it clean and recruiter-friendly.</p>
-                            <input type="email" id="in-email" class="required-field large-input" placeholder="e.g., alex.sterling@example.com">
+                            <input type="email" id="in-email" class="required-field large-input" placeholder="e.g., alex@example.com">
                         </div>
-
                         <div class="question-card" data-q="4">
-                            <span class="q-badge">Question 4 of 8</span>
+                            <span class="q-badge">4 / 8</span>
                             <h3>What is your contact phone number?</h3>
                             <p class="q-hint">Include your country code for foreign recruiters.</p>
                             <input type="tel" id="in-phone" class="required-field large-input" placeholder="e.g., +1 555-0198">
                         </div>
-
                         <div class="question-card" data-q="5">
-                            <span class="q-badge">Question 5 of 8</span>
+                            <span class="q-badge">5 / 8</span>
                             <h3>Where are you located?</h3>
                             <p class="q-hint">City and country, or specify Remote.</p>
                             <input type="text" id="in-city" class="large-input" placeholder="e.g., San Francisco, CA">
                         </div>
-
                         <div class="question-card" data-q="6">
-                            <span class="q-badge">Question 6 of 8</span>
-                            <h3>Add your LinkedIn and Portfolio links</h3>
-                            <p class="q-hint">Allows hiring managers to view code samples and credentials.</p>
-                            <div class="form-group" style="margin-top: 1rem;">
-                                <label>LinkedIn URL</label>
-                                <input type="text" id="in-linkedin" placeholder="linkedin.com/in/username">
-                            </div>
-                            <div class="form-group">
-                                <label>Portfolio / GitHub</label>
-                                <input type="text" id="in-github" placeholder="github.com/username">
-                            </div>
+                            <span class="q-badge">6 / 8</span>
+                            <h3>Add your online presence</h3>
+                            <p class="q-hint">Links to LinkedIn or GitHub.</p>
+                            <div class="form-group"><input type="text" id="in-linkedin" placeholder="linkedin.com/in/username"></div>
+                            <div class="form-group"><input type="text" id="in-github" placeholder="github.com/username"></div>
                         </div>
-
                         <div class="question-card" data-q="7">
-                            <span class="q-badge">Question 7 of 8</span>
-                            <h3>Upload a professional photo (Optional)</h3>
-                            <p class="q-hint">ATS-focused templates automatically omit photographs.</p>
-                            <input type="file" id="in-photo" accept="image/*" style="margin-top: 1rem;">
+                            <span class="q-badge">7 / 8</span>
+                            <h3>Upload a professional photo</h3>
+                            <p class="q-hint">Optional. ATS formats auto-hide this.</p>
+                            <div class="file-upload-wrapper"><input type="file" id="in-photo" accept="image/*"></div>
                         </div>
-
                         <div class="question-card" data-q="8">
-                            <span class="q-badge">Question 8 of 8</span>
-                            <h3>Write a concise executive summary</h3>
-                            <p class="q-hint">Summarize your years of experience, core tech stack, and proudest achievements.</p>
-                            <textarea id="in-summary" class="required-field" rows="5" placeholder="Results-oriented engineer with 5+ years building scalable, responsive web systems..."></textarea>
+                            <span class="q-badge">8 / 8</span>
+                            <h3>Write an executive summary</h3>
+                            <p class="q-hint">Summarize your tech stack and proudest achievements.</p>
+                            <textarea id="in-summary" class="required-field" rows="5" placeholder="Results-oriented engineer with 5+ years building scalable systems..."></textarea>
                         </div>
                     </div>
 
@@ -378,9 +314,9 @@
                     <div class="form-step" data-step="2">
                         <div class="question-card active">
                             <h3>Work Experience</h3>
-                            <p class="q-hint">List your experience in reverse chronological order.</p>
+                            <p class="q-hint">List your roles in reverse chronological order.</p>
                             <div id="experience-container"></div>
-                            <button type="button" class="btn-secondary" onclick="addExperienceBlock()" style="width: 100%; margin-top: 0.5rem;">➕ Add Another Position</button>
+                            <button type="button" class="btn-ghost w-100 mt-2" onclick="addExperienceBlock()"><i class="ph ph-plus"></i> Add Position</button>
                         </div>
                     </div>
 
@@ -388,68 +324,86 @@
                     <div class="form-step" data-step="3">
                         <div class="question-card active">
                             <h3>Academic History</h3>
-                            <p class="q-hint">Include your degrees, graduation years, and universities.</p>
+                            <p class="q-hint">Include degrees and universities.</p>
                             <div id="education-container"></div>
-                            <button type="button" class="btn-secondary" onclick="addEducationBlock()" style="width: 100%; margin-top: 0.5rem;">➕ Add Education</button>
+                            <button type="button" class="btn-ghost w-100 mt-2" onclick="addEducationBlock()"><i class="ph ph-plus"></i> Add Education</button>
                         </div>
                     </div>
 
-                    <!-- STEP 4: Skills -->
+                    <!-- STEP 4: Skills (WITH AI ASSISTANT) -->
                     <div class="form-step" data-step="4">
                         <div class="question-card active">
-                            <h3>What are your top core competencies?</h3>
+                            <h3>Core Competencies</h3>
                             <p class="q-hint">Separate items with commas or newlines.</p>
-                            <textarea id="in-skills" rows="6" placeholder="React, Node.js, Python, Cloud Architecture, CI/CD pipelines, Docker"></textarea>
+                            
+                            <!-- AI Skill Suggestions Panel -->
+                            <div class="ai-skill-suggestions mt-2 mb-3">
+                                <p style="font-size:0.85rem; font-weight:600; color:var(--text-main); margin-bottom:0.6rem; display:flex; align-items:center; gap:6px;">
+                                    <i class="ph-fill ph-sparkle" style="color:var(--primary-color);"></i> AI Suggested Skills (Click to add):
+                                </p>
+                                <div class="skill-pills" id="ai-skill-pills">
+                                    <span class="skill-pill" onclick="addSkill('JavaScript')">+ JavaScript</span>
+                                    <span class="skill-pill" onclick="addSkill('React')">+ React</span>
+                                    <span class="skill-pill" onclick="addSkill('Python')">+ Python</span>
+                                    <span class="skill-pill" onclick="addSkill('Software Development')">+ Software Dev</span>
+                                    <span class="skill-pill" onclick="addSkill('Video Editing')">+ Video Editing</span>
+                                    <span class="skill-pill" onclick="addSkill('Blender 3D')">+ Blender 3D</span>
+                                    <span class="skill-pill" onclick="addSkill('Project Management')">+ Management</span>
+                                    <span class="skill-pill" onclick="addSkill('Agile Methodologies')">+ Agile</span>
+                                </div>
+                            </div>
+
+                            <textarea id="in-skills" rows="6" placeholder="React, Node.js, Python, Cloud Architecture..."></textarea>
                         </div>
                     </div>
 
                     <!-- STEP 5: Additional Info -->
                     <div class="form-step" data-step="5">
                         <div class="question-card active">
-                            <h3>Certifications, Languages & Achievements</h3>
-                            <p class="q-hint">List foreign languages, industry certificates, or major awards.</p>
-                            <textarea id="in-additional" rows="7" placeholder="• AWS Certified Solutions Architect&#10;• Fluent in English & Spanish&#10;• Best Enterprise Design Award 2025"></textarea>
+                            <h3>Additional Highlights</h3>
+                            <p class="q-hint">List certifications, languages, or awards.</p>
+                            <textarea id="in-additional" rows="7" placeholder="• AWS Certified Solutions Architect&#10;• Fluent in English & Spanish"></textarea>
                         </div>
                     </div>
 
                     <!-- STEP 6: Design & Finalize -->
                     <div class="form-step" data-step="6">
-                        <div class="question-card active download-box">
-                            <h2>Design & Finalize</h2>
-                            <p class="q-hint" style="margin-bottom: 1.5rem;">Select your preferred corporate layout and export your document.</p>
+                        <div class="question-card active">
+                            <h3>Design & Finalize</h3>
+                            <p class="q-hint">Select a layout and export your document.</p>
                             
-                            <div class="form-group" style="text-align: left; margin-bottom: 1.5rem;">
-                                <label>Resume Layout Blueprint:</label>
+                            <div class="form-group mt-3">
+                                <label>Layout Blueprint</label>
                                 <select id="template-selector" class="custom-select">
-                                    <option value="template-tech-split">Tech Split (2-Column Reference)</option>
-                                    <option value="template-harvard">Harvard Classic (ATS Standard)</option>
-                                    <option value="template-compact-grid">Silicon Valley Compact Grid</option>
-                                    <option value="template-ivy-league">Ivy League Executive (Finance/Legal)</option>
+                                    <option value="template-tech-split">Tech Split (2-Column)</option>
+                                    <option value="template-harvard">Harvard Classic</option>
+                                    <option value="template-compact-grid">Silicon Valley Compact</option>
+                                    <option value="template-ivy-league">Ivy League Executive</option>
                                     <option value="template-modern">Modern Minimal</option>
                                     <option value="template-minimal">Executive Clean</option>
                                 </select>
                             </div>
 
-                            <div class="form-group" style="text-align: left; margin-bottom: 2rem;">
-                                <label>Accent Theme Color:</label>
+                            <div class="form-group mt-3 mb-4">
+                                <label>Accent Theme</label>
                                 <div class="color-swatches">
-                                    <div class="swatch" style="background: #0f172a;" onclick="setAccentColor('#0f172a')" title="Corporate Navy"></div>
-                                    <div class="swatch" style="background: #111111;" onclick="setAccentColor('#111111')" title="Classic Black"></div>
-                                    <div class="swatch" style="background: #0284c7;" onclick="setAccentColor('#0284c7')" title="Tech Cerulean"></div>
-                                    <div class="swatch" style="background: #065f46;" onclick="setAccentColor('#065f46')" title="Emerald Tech"></div>
-                                    <div class="swatch" style="background: #881337;" onclick="setAccentColor('#881337')" title="Crimson Executive"></div>
-                                    <input type="color" id="accent-color-picker" value="#0f172a" class="custom-color-picker" title="Custom Color">
+                                    <div class="swatch" style="background: #0f172a;" onclick="setAccentColor('#0f172a')"></div>
+                                    <div class="swatch" style="background: #111111;" onclick="setAccentColor('#111111')"></div>
+                                    <div class="swatch" style="background: #0284c7;" onclick="setAccentColor('#0284c7')"></div>
+                                    <div class="swatch" style="background: #065f46;" onclick="setAccentColor('#065f46')"></div>
+                                    <div class="swatch" style="background: #881337;" onclick="setAccentColor('#881337')"></div>
+                                    <input type="color" id="accent-color-picker" value="#0f172a" class="custom-color-picker">
                                 </div>
                             </div>
 
-                            <button type="button" class="btn-primary" style="width: 100%; padding: 1.1rem; font-size: 1.1rem;" onclick="downloadPDF()">Download Document (PDF)</button>
+                            <button type="button" class="btn-primary w-100" onclick="downloadPDF()"><i class="ph ph-download-simple"></i> Download PDF</button>
                         </div>
                     </div>
 
                     <!-- Flow Controls -->
                     <div class="form-navigation">
-                        <button type="button" class="btn-secondary" id="prev-btn" onclick="handlePreviousQuestion()">Back</button>
-                        <button type="button" class="btn-primary" id="next-btn" onclick="handleNextQuestion()">Next Question ➜</button>
+                        <button type="button" class="btn-ghost" id="prev-btn" onclick="handlePreviousQuestion()"><i class="ph ph-arrow-left"></i> Back</button>
+                        <button type="button" class="btn-primary" id="next-btn" onclick="handleNextQuestion()">Next <i class="ph ph-arrow-right"></i></button>
                     </div>
                 </form>
             </div>
@@ -459,9 +413,10 @@
     <!-- Cover Letter Section -->
     <section id="cover-letter" class="page-section">
         <div class="tool-container">
+            <!-- Left: Document Preview -->
             <div class="preview-side preview-sticky" id="cl-preview-side">
                 <div class="preview-wrapper" id="cl-capture-node">
-                    <div class="resume-print-target cl-document">
+                    <div class="resume-print-target cl-document" id="cl-document">
                         <div class="cl-header">
                             <h1 id="cl-sender-name">YOUR FULL NAME</h1>
                             <div class="cl-contacts">
@@ -485,31 +440,50 @@
                 </div>
             </div>
 
+            <!-- Right: Cover Letter Form (Now with standalone editable Sender fields) -->
             <div class="form-side" id="cl-form-side">
                 <div class="form-actions-top">
-                    <button class="btn-utility" onclick="loadSampleCoverLetter()">✨ Load Sample Letter</button>
+                    <button class="btn-ghost btn-sm" onclick="loadSampleCoverLetter()"><i class="ph ph-magic-wand"></i> Load Sample</button>
                 </div>
-                <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;">Cover Letter Builder</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Sender details auto-sync directly from your Resume tab entries.</p>
-                <form id="cl-form" onsubmit="event.preventDefault();">
-                    <div class="form-group">
-                        <label>Hiring Manager Name</label>
-                        <input type="text" id="cl-in-manager" placeholder="e.g., Sarah Jenkins">
-                    </div>
-                    <div class="form-group">
-                        <label>Company Name</label>
-                        <input type="text" id="cl-in-company" placeholder="e.g., TechFlow Solutions">
-                    </div>
-                    <div class="form-group">
-                        <label>Company Address (Optional)</label>
-                        <input type="text" id="cl-in-address" placeholder="e.g., 404 Innovation Drive, NY">
-                    </div>
-                    <div class="form-group">
-                        <label>Letter Body</label>
-                        <textarea id="cl-in-body" rows="12" placeholder="I am writing to express my interest in..."></textarea>
-                    </div>
-                    <button type="button" class="btn-primary" style="width: 100%; padding: 1rem; margin-top: 1rem;" onclick="downloadCLPDF()">Download Cover Letter (PDF)</button>
-                </form>
+                <div class="question-card active" style="margin-top:0; display:block;">
+                    <h3>Cover Letter Builder</h3>
+                    <p class="q-hint mb-3">Sender details auto-sync from your Resume, but you can edit them manually below.</p>
+                    
+                    <form id="cl-form" onsubmit="event.preventDefault();">
+                        <div class="form-group mt-2">
+                            <label>Your Name (Sender)</label>
+                            <input type="text" id="cl-in-name" placeholder="Your Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Your Email (Sender)</label>
+                            <input type="email" id="cl-in-email" placeholder="Your Email Address">
+                        </div>
+                        <div class="form-group mb-4">
+                            <label>Your Phone (Sender)</label>
+                            <input type="tel" id="cl-in-phone" placeholder="Your Phone Number">
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+
+                        <div class="form-group">
+                            <label>Hiring Manager Name</label>
+                            <input type="text" id="cl-in-manager" placeholder="Hiring Manager Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" id="cl-in-company" placeholder="Company Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Address (Optional)</label>
+                            <input type="text" id="cl-in-address" placeholder="Company Address (Optional)">
+                        </div>
+                        <div class="form-group">
+                            <label>Letter Body</label>
+                            <textarea id="cl-in-body" rows="12" placeholder="Letter Body..."></textarea>
+                        </div>
+                        <button type="button" class="btn-primary w-100 mt-2" onclick="downloadCLPDF()"><i class="ph ph-download-simple"></i> Download PDF</button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
@@ -554,7 +528,7 @@
         </div>
     </section>
 
-    <!-- MODERN MOBILE APP BOTTOM CONTROL BAR (Replaces Floating Eye Button) -->
+    <!-- Sleek Mobile Bottom App Bar -->
     <div class="mobile-bottom-bar" id="mobile-control-bar">
         <div class="mobile-segmented-control">
             <button type="button" class="segment-btn active" id="btn-mode-edit" onclick="setMobileViewMode('edit')">
@@ -564,7 +538,7 @@
                 <i class="ph ph-file-text"></i> Live Preview
             </button>
         </div>
-        <button type="button" class="mobile-quick-download" onclick="triggerActiveDownload()" title="Quick Download PDF">
+        <button type="button" class="mobile-quick-download" onclick="triggerActiveDownload()" title="Download PDF">
             <i class="ph ph-download-simple"></i>
         </button>
     </div>
