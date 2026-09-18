@@ -12,23 +12,34 @@ themeBtn.addEventListener('click', () => {
     themeBtn.innerHTML = targetTheme === 'dark' ? '<i class="ph ph-moon"></i>' : '<i class="ph ph-sun"></i>';
 });
 
-// Navigation Drawer
+// Navigation Drawer & Overlay Toggle
 const menuBtn = document.getElementById('menu-btn');
 const navDrawer = document.getElementById('nav-drawer');
+const navOverlay = document.getElementById('nav-overlay');
 const navLinks = document.querySelectorAll('.nav-link');
 
-menuBtn.addEventListener('click', () => {
+function toggleMenu() {
     navDrawer.classList.toggle('active');
     menuBtn.classList.toggle('active');
-});
+    if (navOverlay) navOverlay.classList.toggle('active');
+}
+
+function closeMenu() {
+    navDrawer.classList.remove('active');
+    menuBtn.classList.remove('active');
+    if (navOverlay) navOverlay.classList.remove('active');
+}
+
+menuBtn.addEventListener('click', toggleMenu);
+if (navOverlay) navOverlay.addEventListener('click', closeMenu);
 
 function navigateToSection(targetId) {
     activeToolSection = targetId;
     document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
     navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('data-target') === targetId));
     document.getElementById(targetId).classList.add('active');
-    navDrawer.classList.remove('active');
-    menuBtn.classList.remove('active');
+    
+    closeMenu(); // Collapse mobile sidebar cleanly upon navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Sync Bottom App Bar visibility on mobile
