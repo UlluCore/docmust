@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DocMust - Premium Resume Maker</title>
     <!-- Gamma Style Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,6 +25,8 @@
                 <span></span><span></span><span></span>
             </button>
         </div>
+        
+        <!-- Mobile Sidebar Menu -->
         <nav class="nav-menu" id="nav-drawer">
             <a href="#" class="nav-link active" data-target="home">Home Page</a>
             <a href="#" class="nav-link" data-target="product">Product Tool</a>
@@ -33,6 +35,9 @@
             <a href="#" class="nav-link" data-target="contact">Contact</a>
         </nav>
     </header>
+
+    <!-- Overlay for Mobile Menu -->
+    <div class="nav-overlay" id="nav-overlay"></div>
 
     <div id="toast-container"></div>
 
@@ -488,7 +493,7 @@
         </div>
     </section>
 
-    <!-- --- ABOUT SECTION (Restored 100% Identical) --- -->
+    <!-- ABOUT SECTION -->
     <section id="about" class="page-section">
         <div class="about-content">
             <h2>Our Journey & Mission</h2>
@@ -504,7 +509,7 @@
         </div>
     </section>
 
-    <!-- --- CONTACT SECTION (Restored 100% Identical) --- -->
+    <!-- CONTACT SECTION -->
     <section id="contact" class="page-section">
         <div class="contact-content">
             <h2>Get in Touch</h2>
