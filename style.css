@@ -31,12 +31,18 @@
     font-family: var(--font-sans); 
 }
 
-body { 
-    background-color: var(--bg-base); color: var(--text-main); 
-    overflow-x: hidden; -webkit-font-smoothing: antialiased;
+/* FIX: Prevent Mobile Horizontal Scrolling */
+html, body { 
+    width: 100%; max-width: 100vw;
+    overflow-x: hidden;
 }
 
-/* Glass Header (Logo Fix) */
+body { 
+    background-color: var(--bg-base); color: var(--text-main); 
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Glass Header */
 header.glass-header { 
     display: flex; justify-content: space-between; align-items: center; 
     padding: 1rem 2.5rem; position: sticky; top: 0; z-index: 100;
@@ -45,13 +51,23 @@ header.glass-header {
 }
 .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
 .logo span { color: var(--primary-color); }
-.nav-actions { display: flex; align-items: center; gap: 1rem; }
-.theme-toggle, .hamburger { background: none; border: none; color: var(--text-main); font-size: 1.25rem; cursor: pointer; display: flex; }
-.hamburger { flex-direction: column; gap: 5px; z-index: 101; }
+
+/* FIX: Elevate Navigation Actions Z-Index so Hamburg remains clickable */
+.nav-actions { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 110; }
+.theme-toggle, .hamburger { background: none; border: none; color: var(--text-main); font-size: 1.25rem; cursor: pointer; display: flex; position: relative; z-index: 110; }
+.hamburger { flex-direction: column; gap: 5px; }
 .hamburger span { display: block; width: 22px; height: 2px; background-color: var(--text-main); transition: 0.3s; border-radius: 2px; }
 .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .hamburger.active span:nth-child(2) { opacity: 0; }
 .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* NEW: Mobile Overlay Background */
+.nav-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    z-index: 90; opacity: 0; visibility: hidden; transition: 0.3s ease;
+}
+.nav-overlay.active { opacity: 1; visibility: visible; }
 
 .nav-menu { 
     position: fixed; top: 0; right: 0; width: 280px; height: 100vh; 
@@ -61,8 +77,6 @@ header.glass-header {
 }
 .nav-menu.active { transform: translateX(0); box-shadow: -20px 0 50px rgba(0,0,0,0.5); }
 .nav-menu a { color: var(--text-muted); text-decoration: none; font-size: 1.05rem; font-weight: 500; transition: color 0.2s; }
-
-/* FIX: Hover Color for Nav Menu is now specifically orange */
 .nav-menu a:hover, .nav-menu a.active { color: var(--primary-color) !important; }
 
 /* Global Sections */
@@ -299,9 +313,12 @@ input:focus, textarea:focus, .custom-select:focus { border-color: var(--primary-
 
     .template-cards-grid, .features-grid { grid-template-columns: 1fr; gap: 1rem; }
 }
+
 @media (max-width: 768px) {
     .home-hero h1 { font-size: 2.5rem; }
     .home-hero { padding: 5rem 1rem 2rem 1rem; }
+    /* FIX: Adjusted header padding on mobile to prevent squeezing elements horizontally */
+    header.glass-header { padding: 1rem 1.2rem; }
 }
 
 #toast-container { position: fixed; top: 20px; right: 20px; z-index: 1300; }
@@ -318,9 +335,7 @@ input:focus, textarea:focus, .custom-select:focus { border-color: var(--primary-
 .cl-body { line-height: 1.7; font-size: 0.95rem; margin-bottom: 2.5rem; white-space: pre-line; color: #333; }
 .cl-signoff { font-size: 0.95rem; line-height: 1.5; color: #222; }
 
-/* =========================================
-   ORIGINAL RESTORED SECTIONS (DO NOT MODIFY)
-   ========================================= */
+/* ABOUT SECTIONS & CONTACT */
 .about-content, .contact-content { 
     background-color: var(--bg-surface); 
     padding: 4rem; 
@@ -330,46 +345,17 @@ input:focus, textarea:focus, .custom-select:focus { border-color: var(--primary-
     border: 1px solid var(--border-color); 
     box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
 }
-.about-content h2, .contact-content h2 { 
-    color: var(--text-main); 
-    margin-bottom: 1.5rem; 
-    font-size: 2rem; 
-}
-.about-content p { 
-    line-height: 1.7; 
-    margin-bottom: 1.2rem; 
-    color: var(--text-muted); 
-    font-size: 1.05rem; 
-}
+.about-content h2, .contact-content h2 { color: var(--text-main); margin-bottom: 1.5rem; font-size: 2rem; }
+.about-content p { line-height: 1.7; margin-bottom: 1.2rem; color: var(--text-muted); font-size: 1.05rem; }
 
-/* Contact Grid & Credits */
-.contact-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 3rem; 
-    margin-top: 2.5rem; 
-    align-items: start; 
-}
-.contact-info p { 
-    margin-bottom: 0.8rem; 
-    color: var(--text-muted); 
-    font-size: 1.05rem; 
-}
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2.5rem; align-items: start; }
+.contact-info p { margin-bottom: 0.8rem; color: var(--text-muted); font-size: 1.05rem; }
 .contact-credits { 
-    background: var(--bg-base); 
-    padding: 2rem; 
-    border-radius: 8px; 
-    border: 1px solid var(--border-color); 
-    border-left: 4px solid var(--primary-color); 
+    background: var(--bg-base); padding: 2rem; border-radius: 8px; 
+    border: 1px solid var(--border-color); border-left: 4px solid var(--primary-color); 
 }
-.contact-credits p { 
-    color: var(--text-muted); 
-    line-height: 1.6; 
-    font-size: 0.95rem; 
-    margin-top: 0.5rem; 
-}
+.contact-credits p { color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; margin-top: 0.5rem; }
 
-/* Smooth Zoom-In Animation for Contact Credits */
 @keyframes smoothZoomIn {
     0% { opacity: 0; transform: scale(0.95) translateY(10px); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -377,8 +363,7 @@ input:focus, textarea:focus, .custom-select:focus { border-color: var(--primary-
 
 .page-section.active .contact-credits {
     animation: smoothZoomIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    animation-delay: 0.1s; 
-    opacity: 0; 
+    animation-delay: 0.1s; opacity: 0; 
 }
 
 @media (max-width: 768px) {
