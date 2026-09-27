@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +18,21 @@
     <!-- Header (Two-Tone Logo) -->
     <header class="glass-header">
         <div class="logo" style="cursor: pointer;" onclick="navigateToSection('home')">Doc<span>Must</span></div>
+        
         <div class="nav-actions">
+            <!-- Desktop Auth Controls (Hidden on Mobile) -->
+            <div id="desktop-auth-controls" class="desktop-only">
+                <button type="button" class="btn-ghost btn-sm" id="btn-open-login-desktop" onclick="openAuthModal('login')">Log In</button>
+                <button type="button" class="btn-primary btn-sm" id="btn-open-auth-desktop" onclick="openAuthModal('signup')">Sign Up</button>
+                
+                <div id="user-dashboard-desktop" class="user-chip hidden">
+                    <i class="ph-fill ph-user-circle" style="font-size: 1.2rem; color: var(--primary-color);"></i>
+                    <span id="user-email-display-desktop" class="user-chip-name"></span>
+                    <button type="button" class="btn-logout" id="btn-logout-desktop" title="Log Out"><i class="ph ph-sign-out"></i></button>
+                </div>
+            </div>
+
+            <!-- Theme & Hamburger (Always visible) -->
             <button class="theme-toggle" id="theme-btn" title="Toggle Mode">
                 <i class="ph ph-moon"></i>
             </button>
@@ -28,13 +43,69 @@
         
         <!-- Mobile Sidebar Menu -->
         <nav class="nav-menu" id="nav-drawer">
-            <a href="#" class="nav-link active" data-target="home">Home Page</a>
-            <a href="#" class="nav-link" data-target="product">Product Tool</a>
-            <a href="#" class="nav-link" data-target="cover-letter">Cover Letter</a>
-            <a href="#" class="nav-link" data-target="about">About Us</a>
-            <a href="#" class="nav-link" data-target="contact">Contact</a>
+            <!-- Mobile Auth Section (Inside the menu to fix the glitch) -->
+            <div class="mobile-auth-section" id="mobile-auth-controls">
+                <div id="m-logged-out-view">
+                    <button type="button" class="btn-primary w-100 mb-2" onclick="openAuthModal('signup'); closeMenu();">Sign Up</button>
+                    <button type="button" class="btn-ghost w-100" onclick="openAuthModal('login'); closeMenu();">Log In</button>
+                </div>
+                <div id="m-logged-in-view" class="hidden">
+                    <div class="m-user-info">
+                        <i class="ph-fill ph-user-circle" style="font-size: 2rem; color: var(--primary-color);"></i>
+                        <span id="user-email-display-mobile" class="m-username"></span>
+                    </div>
+                    <button type="button" class="btn-ghost w-100 mt-2 text-danger" id="btn-logout-mobile">Log Out</button>
+                </div>
+            </div>
+            
+            <div class="nav-menu-links">
+                <a href="#" class="nav-link active" data-target="home">Home Page</a>
+                <a href="#" class="nav-link" data-target="product">Product Tool</a>
+                <a href="#" class="nav-link" data-target="cover-letter">Cover Letter</a>
+                <a href="#" class="nav-link" data-target="about">About Us</a>
+                <a href="#" class="nav-link" data-target="contact">Contact</a>
+            </div>
         </nav>
     </header>
+
+    <!-- Supabase Authentication Modal -->
+    <div id="auth-modal" class="auth-modal-screen hidden">
+        <div class="auth-modal-content fade-in-up">
+            <button type="button" class="btn-modal-close" id="btn-close-auth"><i class="ph ph-x"></i></button>
+            
+            <div class="auth-header-text">
+                <h2 id="auth-modal-title">Create Account</h2>
+                <p id="auth-modal-subtitle">Join to save and sync your professional resume.</p>
+            </div>
+
+            <!-- Tabs: Sign Up first, Log In second -->
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active" id="tab-signup">Sign Up</button>
+                <button type="button" class="auth-tab-btn" id="tab-login">Log In</button>
+            </div>
+
+            <form id="auth-form">
+                <div class="form-group" id="group-signup-name">
+                    <label for="auth-name">Username</label>
+                    <input type="text" id="auth-name" placeholder="e.g. Alex Sterling">
+                </div>
+                <div class="form-group">
+                    <label for="auth-email">Email Address</label>
+                    <input type="email" id="auth-email" required placeholder="alex@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" required minlength="6" placeholder="••••••••">
+                </div>
+
+                <p id="auth-error-msg" class="text-danger" style="font-size: 0.85rem; margin-bottom: 10px;"></p>
+
+                <button type="submit" class="btn-primary w-100" id="btn-auth-submit" style="margin-top: 10px;">
+                    <span id="auth-btn-label">Create Account</span>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Overlay for Mobile Menu -->
     <div class="nav-overlay" id="nav-overlay"></div>
@@ -548,6 +619,8 @@
         </button>
     </div>
 
+    <!-- Ensure these are the ONLY two script tags here -->
+    <script src="supabase-auth.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
